@@ -1,1 +1,2 @@
-#Simple chat server with clients in rust
+# RCHATS
+simple rust server and client for chatting
