@@ -1,0 +1,8 @@
+# server/config.toml
+[server]
+host = "127.0.0.1"
+port = 8080
+
+[database]
+type = "postgres"
+url = "postgres://myuser:mypassword@localhost:5432/rchats"
