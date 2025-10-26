@@ -1,5 +1,8 @@
 mod connection;
+mod server;
+
+use crate::server::Server;
 
 fn main() {
-    println!("Hello, world!");
+    Server::new();
 }
