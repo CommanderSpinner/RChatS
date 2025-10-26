@@ -1,11 +1,13 @@
-use postgres::{Client, NoTls, Error};
+use sqlx::{PgPool, Error};
 
-struct Connection {
-    connection_string: String,
+pub struct Connection {
+    pool: PgPool,
 }
 
 impl Connection {
-    fn new(connection_string: &str) -> Connection {
-        Connection { connection_string: connection_string.to_string() }
-    }
+    // Create a new connection pool asynchronously
+    pub async fn new(connection_string: &str) -> Result<Connection, Error> {
+        let pool = PgPool::connect(connection_string).await?;
+        Ok(Connection { pool })
+    }    
 }
