@@ -6,12 +6,16 @@ pub struct Server {
 
 impl Server {
     pub async fn new() -> Result<Self, sqlx::Error> {
+
+        println!("Starting server");
+
         let conn_string = Self::read_conn_string();
         let conn = Connection::new(conn_string).await?;
         Ok(Self { conn })
     }
 
     fn read_conn_string() -> String {
+        
         "postgres://user:password@localhost/dbname".to_string()
     }
 }
