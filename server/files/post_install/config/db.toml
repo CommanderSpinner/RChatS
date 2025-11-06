@@ -1,0 +1,3 @@
+[database]
+type = "postgres"
+url = "postgres://admin:securepasswd123@localhost:5432/rchats"

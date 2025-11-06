@@ -2,6 +2,9 @@
 
 set -e
 
+echo "cleaning"
+cargo clean
+
 echo "building"
 cargo build
 

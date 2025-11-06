@@ -5,6 +5,6 @@ use crate::server::Server;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let s = Server::new().await?;
+    let _s = Server::new().await?;
     Ok(())
 }
