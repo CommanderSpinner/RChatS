@@ -30,8 +30,3 @@ CREATE TABLE message (
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
-
-INSERT INTO "type" (type, file_location) VALUES
-('image', 'files/image'),
-('audio', 'files/audio'),
-('video', 'files/video');
