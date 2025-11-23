@@ -1,24 +1,25 @@
 use std::fs;
 use toml::Value;
-use std::net::TcpListener;
+use tokio::net::TcpListener;
 
 use crate::connection::Connection;
 
 pub struct Server {
     conn: Connection,
+    listener: TcpListener,
 }
 
 impl Server {
-    pub async fn new() -> Result<Self, sqlx::Error> {
+    pub async fn new() -> Result<Self, anyhow::Error> {
 
         println!("Starting server");
 
         let conn_string = Self::read_conn_string();
         let conn = Connection::new(conn_string).await?;
 
-        Self::start_tcp_listener();
+        let listener: TcpListener = Self::start_tcp_listener().await?;
 
-        Ok(Self { conn })
+        Ok(Self { conn, listener})
     }
 
     fn read_conn_string() -> String {
@@ -39,7 +40,7 @@ impl Server {
         connection_string.to_string()
     }
 
-    fn start_tcp_listener() {
+    async fn start_tcp_listener() -> anyhow::Result<TcpListener> {
         let config_file_rchats = fs::read_to_string("files/server_data/config/rchats.toml")
             .expect("Failed to read config file for rchats!");
 
@@ -54,12 +55,14 @@ impl Server {
         // Build the address string
         let addr = format!("0.0.0.0:{}", port);
 
-        let listener = TcpListener::bind(&addr)
-            .expect("Failed to bind TCP listener");
+        // Bind TCP listener asynchronously
+        let listener = TcpListener::bind(&addr).await
+            .map_err(|e| anyhow::anyhow!("Failed to bind TCP listener: {}", e))?;
 
 
         println!("Server listening on {}", addr);
-        
+
+        Ok(listener)
     }
 
     pub async fn handle_request(&self) {
