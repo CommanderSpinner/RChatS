@@ -11,7 +11,10 @@ cargo build
 echo "coping files for post install and server to build dir"
 
 cp -R files ../target/debug/
-cp -R files ../target/release/
+
+echo "executing script start db server"
+
+bash ../target/debug/files/server_data/db_server/createdb.sh
 
 echo "testing server"
 
