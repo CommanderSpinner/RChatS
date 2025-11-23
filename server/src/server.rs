@@ -69,3 +69,9 @@ impl Server {
         
     } 
 }
+
+impl Drop for Server {
+    fn drop(&mut self) {
+        println!("stopping server");
+    }
+}
