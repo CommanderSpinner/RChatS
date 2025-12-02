@@ -1,5 +1,6 @@
 use sqlx::{PgPool, Error};
 
+#[derive(Clone)]
 pub struct Connection {
     pool: PgPool,
     conn_string: String,

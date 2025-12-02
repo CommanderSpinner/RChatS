@@ -1,6 +1,8 @@
 use std::fs;
 use toml::Value;
 use tokio::net::TcpListener;
+use tokio::net::TcpStream;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 use crate::connection::Connection;
 
@@ -65,9 +67,39 @@ impl Server {
         Ok(listener)
     }
 
-    pub async fn handle_request(&self) {
+    pub async fn handle_request(&self) -> anyhow::Result<()> {
+        loop {
+        let (socket, addr) = self.listener.accept().await?;
+        println!("Client connected: {}", addr);
+
+        let mut conn = self.conn.clone();
+
+        tokio::spawn(async move {
+            if let Err(e) = Self::handle_client(socket, conn).await {
+                eprintln!("client {} error: {:?}", addr, e);
+            }
+            });
+        }
         
-    } 
+    }
+
+    // needs behavior for text and files
+    async fn handle_client( mut socket: TcpStream, mut db: Connection) -> anyhow::Result<()> {
+        let mut buf = [0u8; 1024]; // buffe mgiht not be adequat
+
+        loop {
+            let n = socket.read(&mut buf).await?;
+            if n == 0 {
+                return Ok(()); // disconnected
+            }
+
+            let msg = String::from_utf8_lossy(&buf[..n]);
+            
+            println!("Client says: {}", msg);
+
+            socket.write_all(b"ok\n").await?;
+        }
+    }
 }
 
 impl Drop for Server {
