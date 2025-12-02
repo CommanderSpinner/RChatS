@@ -16,6 +16,8 @@ impl Server {
 
         println!("Starting server");
 
+        common::debug_println!("process id: {}", std::process::id());
+
         let conn_string = Self::read_conn_string();
         let conn = Connection::new(conn_string).await?;
 
@@ -95,7 +97,7 @@ impl Server {
 
             let msg = String::from_utf8_lossy(&buf[..n]);
             
-            println!("Client says: {}", msg);
+            common::debug_println!("Client says: {}", msg);
 
             socket.write_all(b"ok\n").await?;
         }
