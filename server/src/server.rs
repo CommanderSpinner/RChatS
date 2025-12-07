@@ -38,8 +38,8 @@ impl Server {
             .as_str()
             .unwrap();
 
-        println!("config for db:\n {}", config_file);
-        println!("conn string: {}", connection_string);
+        common::debug_println!("config for db:\n {}", config_file);
+        common::debug_println!("conn string: {}", connection_string);
         
         connection_string.to_string()
     }
