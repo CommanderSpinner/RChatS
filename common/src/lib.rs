@@ -18,6 +18,8 @@ pub enum MessageContent {
 
 
 // macros for debugging
+
+// for printing something only when debuging but not in prod 
 #[macro_export]
 macro_rules! debug_println {
     ($($arg:tt)*) => {
