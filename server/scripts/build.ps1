@@ -34,6 +34,7 @@ if($package) {
 }
 
 # still need to copy files to folders
+# also need to start db server and do cleaning of it
 
 # return to scripts folder
 cd $server_root
