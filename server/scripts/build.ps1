@@ -17,11 +17,13 @@ $ErrorActionPreference = 'Stop'
 if ($null -eq $clean) { $clean = $false }
 if ($null -eq $package) { $package = $false }
 
+cd $PSScriptRoot
 cd ..
 $Server_root = Get-Location
 
 #getting "target" dir from cargo
 cd ..
+mkdir target
 cd target
 $target_dir = Get-Location
 
