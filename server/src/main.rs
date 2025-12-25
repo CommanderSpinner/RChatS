@@ -1,11 +1,13 @@
 mod connection;
-mod server;
+mod appserver;
+mod ws;
+mod upload;
 
-use crate::server::Server;
+use crate::appserver::AppServer;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let server = Server::new().await?;
+    let server = AppServer::new().await?;
     server.handle_request().await;
     Ok(())
 }
