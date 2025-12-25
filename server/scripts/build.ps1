@@ -17,31 +17,31 @@ $ErrorActionPreference = 'Stop'
 if ($null -eq $clean) { $clean = $false }
 if ($null -eq $package) { $package = $false }
 
-cd $PSScriptRoot
-cd ..
+Set-Location $PSScriptRoot
+Set-Location ..
 $Server_root = Get-Location
 
 #getting "target" dir from cargo
-cd ..
+Set-Location ..
 mkdir target
-cd target
+Set-Location target
 $target_dir = Get-Location
 
 #getting dir of platform target
 mkdir $Platform
-cd $Platform
+Set-Location $Platform
 if($package){
     mkdir release
-    cd release
+    Set-Location release
 } else {
     mkdir debug
-    cd debug
+    Set-Location debug
 }
 
 $platform_binary = Get-Location
 
 #return to server root
-cd $Server_root
+Set-Location $Server_root
 
 Write-Output "server root: $($Server_root)"
 Write-Output "platform target dir: $($platform_binary)"
@@ -67,5 +67,5 @@ if($package) {
 # also need to start db server and do cleaning of it
 
 # return to scripts folder
-cd $server_root
-cd scripts
+Set-Location $server_root
+Set-Location scripts
