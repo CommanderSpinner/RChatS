@@ -3,7 +3,6 @@ use sqlx::{PgPool, Error};
 #[derive(Clone)]
 pub struct Connection {
     pool: PgPool,
-    conn_string: String,
 }
 
 impl Connection {
@@ -11,7 +10,6 @@ impl Connection {
         let pool = PgPool::connect(&connection_string).await?;
         Ok(Connection {
             pool,
-            conn_string: connection_string,
         })
     }
 }
