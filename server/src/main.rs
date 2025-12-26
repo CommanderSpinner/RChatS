@@ -1,7 +1,6 @@
+mod apphttp;
 mod connection;
 mod appserver;
-mod ws;
-mod upload;
 
 use crate::appserver::AppServer;
 

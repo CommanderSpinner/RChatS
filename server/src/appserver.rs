@@ -1,10 +1,9 @@
 use std::fs;
 use toml::Value;
 
-use crate::connection::Connection;
+use crate::{apphttp::ws::WsHandler, connection::Connection, apphttp::upload::upload_file};
 
 use hyper::Server;
-
 
 use axum::{
     Router,
@@ -66,11 +65,11 @@ impl AppServer {
         // Wrap DB connection in Arc for shared state
         let state = Arc::new(self.conn.clone());
         
-        let app = Router::new();
-            //.route("/ws", get(crate::ws::ws_handler))
-            //.route("/upload/:filetype", post(crate::upload::upload_file)) // dynamic filetype
+        let app = Router::new()
+            .route("/ws", get(WsHandler))
+            .route("/upload/:filetype", post(upload_file)) // dynamic filetype
             //.nest("/media", media_router)
-            //.with_state(state);
+            .with_state(state);
 
         // Read port from config
         let port = Self::read_port();
