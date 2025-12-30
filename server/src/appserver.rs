@@ -7,11 +7,10 @@ use hyper::Server;
 
 use axum::{
     Router,
-    routing::{get, post},
+    routing::{get, post, get_service},
 };
 use std::{net::SocketAddr, sync::Arc};
 use tower_http::services::ServeDir;
-
 
 
 pub struct AppServer {
@@ -64,10 +63,20 @@ impl AppServer {
     pub async fn handle_request(&self) -> anyhow::Result<()> {
         // Wrap DB connection in Arc for shared state
         let state = Arc::new(self.conn.clone());
+
+        // Wrap the static files directory
+    let static_files_service = get_service(ServeDir::new("files/server_data/web-app"))
+        .handle_error(|error: std::io::Error| async move {
+            (
+                axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Unhandled internal error: {}", error),
+            )
+        });
         
         let app = Router::new()
             .route("/ws", get(WsHandler))
             .route("/upload/:filetype", post(upload_file)) // dynamic filetype
+                    .fallback(static_files_service)
             //.nest("/media", media_router)
             .with_state(state);
 
