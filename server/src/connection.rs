@@ -12,4 +12,16 @@ impl Connection {
             pool,
         })
     }
+
+    pub async fn create_user() {
+
+    }
+
+    pub async fn create_chat() {
+
+    }
+
+    pub async fn create_message() {
+        
+    }
 }

@@ -1,13 +1,25 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct ChatMessage {
+pub struct create_user {
     pub username: String,
-    pub password: String,
-    pub to: String,
-    pub content: MessageContent,
+    pub plain_password: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct create_chat {
+    pub chatname: String,
+    pub username: [i64; 2],
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct create_message {
+    pub username: String,
+    pub plain_password: String,
+    pub to: String,
+    pub content: String,
+
+}
 
 // macros for debugging
 
