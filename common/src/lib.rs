@@ -8,14 +8,6 @@ pub struct ChatMessage {
     pub content: MessageContent,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(tag = "type", content = "data")]
-pub enum MessageContent {
-    Text(String),
-    Image(String), // Base64-encoded
-    Audio(String), // Base64-encoded 
-}
-
 
 // macros for debugging
 

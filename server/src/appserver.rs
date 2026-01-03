@@ -65,14 +65,14 @@ impl AppServer {
         let state = Arc::new(self.conn.clone());
 
         // Wrap the static files directory
-    let static_files_service = get_service(ServeDir::new("files/server_data/web-app"))
-        .handle_error(|error: std::io::Error| async move {
-            (
-                axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Unhandled internal error: {}", error),
-            )
-        });
-        
+        let static_files_service = get_service(ServeDir::new("files/server_data/web-app"))
+            .handle_error(|error: std::io::Error| async move {
+                (
+                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                    format!("Unhandled internal error: {}", error),
+                )
+            });
+            
         let app = Router::new()
             .route("/ws", get(WsHandler))
             .route("/upload/:filetype", post(upload_file)) // dynamic filetype
