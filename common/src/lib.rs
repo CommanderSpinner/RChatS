@@ -18,7 +18,6 @@ pub struct create_message {
     pub plain_password: String,
     pub to: String,
     pub content: String,
-
 }
 
 // macros for debugging
