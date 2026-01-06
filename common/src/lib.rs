@@ -27,8 +27,12 @@ pub struct create_message {
 macro_rules! debug_println {
     ($($arg:tt)*) => {
         #[cfg(debug_assertions)]{
+            print!("\x1b[31m"); // 31 = red
             print!("Debug msg: ");
             println!($($arg)*);
+
+            // Reset color to default
+            print!("\x1b[0m");
         }
 
         #[cfg(not(debug_assertions))]
