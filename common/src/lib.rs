@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use colored::*;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct create_user {
@@ -27,14 +28,12 @@ pub struct create_message {
 macro_rules! debug_println {
     ($($arg:tt)*) => {
         #[cfg(debug_assertions)]{
-            print!("\x1b[31m"); // 31 = red
-            print!("Debug msg: ");
-            println!($($arg)*);
+            
+            use colored::Colorize;
 
-            // Reset color to default
-            print!("\x1b[0m");
+            print!("{}", "Debug msg: ".blue());
+            println!("{}", format!($($arg)*).blue());
         }
-
         #[cfg(not(debug_assertions))]
         {} // do nothing in release
     };
