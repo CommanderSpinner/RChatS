@@ -10,7 +10,7 @@ pub struct create_user {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct create_chat {
     pub chatname: String,
-    pub username: [i64; 2],
+    pub userids: [i64; 2],
 }
 
 #[derive(Serialize, Deserialize, Debug)]

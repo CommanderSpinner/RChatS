@@ -17,6 +17,7 @@ CREATE TABLE "type" (
 CREATE TABLE chat (
     cid SERIAL PRIMARY KEY,
     chat_name VARCHAR(100),
+    user_ids INTEGER[] NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
