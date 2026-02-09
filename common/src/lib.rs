@@ -17,7 +17,7 @@ pub struct create_chat {
 pub struct create_message {
     pub username: String,
     pub plain_password: String,
-    pub to: String,
+    pub to: String, // to is to which username it will be send 
     pub content: String,
 }
 
