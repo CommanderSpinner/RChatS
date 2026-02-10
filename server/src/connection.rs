@@ -43,12 +43,16 @@ impl Connection {
 
     pub async fn create_message(&self, m: &common::create_message) -> Result<(), Error> {
 
-        let url: String = "".to_string();
+        let from_uid = self.get_uid(&m.username).await?;
+        let to_uid = self.get_uid(&m.to).await?;
+        let cid = self.get_cid(from_uid, to_uid).await?;
+
+        let url: String = "files/chat_data/".to_string() + &m.username.to_string();
 
 
         sqlx::query("INSERT INTO message(cid, uid, url, content) VALUES ($1, $2, $3, $4)")
-            .bind(self.get_cid(&m.username).await?)
-            .bind(self.get_uid(&m.username, &m.to).await)
+            .bind(cid)
+            .bind(from_uid)
             .bind(url)
             .bind(m.content.clone())
             .execute(&self.pool)
@@ -56,19 +60,25 @@ impl Connection {
         Ok(())
     }
 
-    // read out matching cid from db
-    async fn get_cid(&self, username: &str) -> Result<i64, sqlx::Error> {
-        let chat = sqlx::query("SELECT * FROM chat WHERE = $1")
+    // read out matching uid from db
+    async fn get_uid(&self, username: &str) -> Result<i64, sqlx::Error> {
+        let user = sqlx::query("SELECT * FROM \"user\" WHERE username= $1")
             .bind(username)
             .fetch_one(&self.pool)
             .await?;
-        let cid: i64 = chat.get("cid");
+        let uid: i64 = user.get("uid");
 
-        Ok(cid)
+        Ok(uid)
     }
 
-    // read out matching uid from db
-    async fn get_uid(&self, username: &str, to: &str) -> i64 {
-        -1
+    // read out matching cid from db
+    async fn get_cid(&self, from: i64, to: i64) -> Result<i64, sqlx::Error> {
+        let cid = sqlx::query_scalar("SELECT cid FROM chat WHERE user_ids = ARRAY[$1, $2] OR user_ids = ARRAY[$2, $1]")
+            .bind(from)
+            .bind(to)
+            .fetch_one(&self.pool)
+            .await?;
+
+        Ok(cid)
     }
 }

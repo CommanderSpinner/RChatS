@@ -17,7 +17,7 @@ CREATE TABLE "type" (
 CREATE TABLE chat (
     cid SERIAL PRIMARY KEY,
     chat_name VARCHAR(100),
-    user_ids INTEGER[] NOT NULL,
+    user_ids INTEGER[] NOT NULL CHECK (array_length(user_ids, 1) = 2), 
     created_at TIMESTAMP DEFAULT NOW()
 );
 
