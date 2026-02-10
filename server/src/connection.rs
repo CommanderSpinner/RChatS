@@ -1,4 +1,4 @@
-use sqlx::{PgPool, Error};
+use sqlx::{PgPool, Error, Row};
 
 //use crate::DB_tables::*;
 use crate::DB_tables::user::User;
@@ -47,8 +47,8 @@ impl Connection {
 
 
         sqlx::query("INSERT INTO message(cid, uid, url, content) VALUES ($1, $2, $3, $4)")
-            .bind(Self::get_cid(&m.username).await)
-            .bind(Self::get_uid(&m.username, &m.to).await)
+            .bind(self.get_cid(&m.username).await?)
+            .bind(self.get_uid(&m.username, &m.to).await)
             .bind(url)
             .bind(m.content.clone())
             .execute(&self.pool)
@@ -57,13 +57,18 @@ impl Connection {
     }
 
     // read out matching cid from db
-    async fn get_cid(username: &str) -> i64 {
-        
-        -1
+    async fn get_cid(&self, username: &str) -> Result<i64, sqlx::Error> {
+        let chat = sqlx::query("SELECT * FROM chat WHERE = $1")
+            .bind(username)
+            .fetch_one(&self.pool)
+            .await?;
+        let cid: i64 = chat.get("cid");
+
+        Ok(cid)
     }
 
     // read out matching uid from db
-    async fn get_uid(username: &str, to: &str) -> i64 {
+    async fn get_uid(&self, username: &str, to: &str) -> i64 {
         -1
     }
 }
