@@ -61,7 +61,7 @@ impl Connection {
     }
 
     // read out matching uid from db
-    async fn get_uid(&self, username: &str) -> Result<i64, sqlx::Error> {
+    pub async fn get_uid(&self, username: &str) -> Result<i64, sqlx::Error> {
         let user = sqlx::query("SELECT * FROM \"user\" WHERE username= $1")
             .bind(username)
             .fetch_one(&self.pool)
@@ -72,7 +72,7 @@ impl Connection {
     }
 
     // read out matching cid from db
-    async fn get_cid(&self, from: i64, to: i64) -> Result<i64, sqlx::Error> {
+    pub async fn get_cid(&self, from: i64, to: i64) -> Result<i64, sqlx::Error> {
         let cid = sqlx::query_scalar("SELECT cid FROM chat WHERE user_ids = ARRAY[$1, $2] OR user_ids = ARRAY[$2, $1]")
             .bind(from)
             .bind(to)
@@ -80,5 +80,15 @@ impl Connection {
             .await?;
 
         Ok(cid)
+    }
+
+    // returns messages. count defines how many messages should be read
+    pub async fn read_messages_from_chat(&self, cid: i64, count: i64) -> Result<Vec<Message>, sqlx::Error> {
+        let m: Vec<Message> = sqlx::query_as::<_, Message>("SELECT * FROM message WHERE cid = $1 ORDER BY created_at LIMIT $2;")
+            .bind(cid)
+            .bind(count)
+            .fetch_all(&self.pool)
+            .await?;
+        Ok(m)
     }
 }
