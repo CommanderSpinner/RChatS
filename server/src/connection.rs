@@ -42,7 +42,6 @@ impl Connection {
     }
 
     pub async fn create_message(&self, m: &common::create_message) -> Result<(), Error> {
-
         let from_uid = self.get_uid(&m.username).await?;
         let to_uid = self.get_uid(&m.to).await?;
         let cid = self.get_cid(from_uid, to_uid).await?;
