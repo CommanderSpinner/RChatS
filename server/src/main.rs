@@ -1,13 +1,13 @@
 mod apphttp;
 mod connection;
 mod appserver;
-mod DB_tables;
+mod db_tables;
 
 use crate::appserver::AppServer;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server = AppServer::new().await?;
-    server.handle_request().await;
+    server.handle_request().await?;
     Ok(())
 }

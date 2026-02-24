@@ -1,9 +1,9 @@
 use sqlx::{PgPool, Error, Row};
 
 //use crate::DB_tables::*;
-use crate::DB_tables::user::User;
-use crate::DB_tables::message::Message;
-use crate::DB_tables::chat::Chat;
+use crate::db_tables::user::User;
+use crate::db_tables::message::Message;
+use crate::db_tables::chat::Chat;
 //use crate::common::*;
 
 #[derive(Clone)]
