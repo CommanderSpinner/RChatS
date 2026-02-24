@@ -1,5 +1,7 @@
 -- this sql code creates the db, just run it in postgres and it should be ready to go
 
+DROP DATABASE IF exists rchats;
+
 SELECT 'CREATE DATABASE rchats'
 WHERE NOT EXISTS (
     SELECT FROM pg_database WHERE datname = 'rchats'
