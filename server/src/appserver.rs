@@ -1,7 +1,7 @@
 use std::fs;
 use toml::Value;
 
-use crate::{apphttp::ws::ws_handler, connection::Connection, apphttp::upload::upload_file};
+use crate::{apphttp::ws::ws_handler, connection::Connection, apphttp::upload::upload_file, apphttp::pages::index};
 
 use hyper::Server;
 
@@ -65,6 +65,7 @@ impl AppServer {
         let state = Arc::new(self.conn.clone());
 
         // Wrap the static files directory
+        /*
         let static_files_service = get_service(ServeDir::new("files/server_data/web-app"))
             .handle_error(|error: std::io::Error| async move {
                 (
@@ -72,11 +73,12 @@ impl AppServer {
                     format!("Unhandled internal error: {}", error),
                 )
             });
+        */
             
         let app = Router::new()
             .route("/ws", get(ws_handler))
             .route("/upload/:filetype", post(upload_file)) // dynamic filetype
-                    .fallback(static_files_service)
+            .route("/", get(index))
             //.nest("/media", media_router)
             .with_state(state);
 
