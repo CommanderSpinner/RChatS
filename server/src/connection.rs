@@ -90,4 +90,15 @@ impl Connection {
             .await?;
         Ok(m)
     }
+
+    pub async fn validate_login(&self, username: &str, hashed_password: String) -> Result<bool, sqlx::Error> {
+
+        let login_result = sqlx::query("SELECT * FROM \"users\" WHERE user_name = $1 AND hashed_password = $2;")
+            .bind(username)
+            .bind(hashed_password)
+            .fetch_optional(&self.pool)
+            .await?;
+
+        Ok(login_result.is_some())
+    }
 }
