@@ -1,14 +1,5 @@
 -- this sql code creates the db, just run it in postgres and it should be ready to go
 
-DROP DATABASE IF exists rchats;
-
-SELECT 'CREATE DATABASE rchats'
-WHERE NOT EXISTS (
-    SELECT FROM pg_database WHERE datname = 'rchats'
-)\gexec
-
---Use rchats;
-
 CREATE TABLE "user" (
     uid SERIAL PRIMARY KEY,
     user_name VARCHAR(100) UNIQUE NOT NULL,

@@ -5,11 +5,12 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: securepasswd123
-      #POSTGRES_DB: rchats
+      POSTGRES_DB: rchats
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql
+      - ./init-scripts:/docker-entrypoint-initdb.d
 
 volumes:
-  pgdata:
+  pgdata: {} 
