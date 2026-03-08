@@ -12,24 +12,34 @@ use std::collections::HashMap;
 
 #[derive(Template)]
 #[template(path = "index.html")]
-struct IndexTemplate<'a> {
+struct htmlTemplate<'a> {
     title: &'a str,
+    site_content: &'a str,
 }
 
-pub async fn index(jar: CookieJar, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
+pub async fn login() -> Html<String> {
+    let page = htmlTemplate {
+        title: "login rchats",
+        site_content: "form",
+    };
 
-    let username: String = payload.get("username").cloned().unwrap_or_default();
-    let password: String = payload.get("password").cloned().unwrap_or_default();
+    common::debug_println!("web login access");
+
+    Html(page.render().unwrap())
+}
+
+pub async fn interface(jar: CookieJar, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
+
+    let page = htmlTemplate {
+        title: "web acess",
+        site_content: "interface",
+    };
+
+    let username: String = payload.get("user_name").cloned().unwrap_or_default();
+    let password: String = payload.get("plain_password").cloned().unwrap_or_default();
 
     common::debug_println!("username: {}", username);
     common::debug_println!("password: {}", password);
-    
-
-    let page = IndexTemplate {
-        title: "login rchats",
-    };
-
-    common::debug_println!("web interface accessed");
 
     Html(page.render().unwrap())
 }
