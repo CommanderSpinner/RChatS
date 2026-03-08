@@ -34,26 +34,11 @@
         <h1>{{ title }}</h1>
     </header>
     <main class="py-3 container d-flex justify-content-between align-items-center col-3">
-        <form method="post" class="w-100 w-sm-50 mx-auto mt-5 p-4 border rounded shadow" method="post">
-        <h3 class="mb-4 text-center">Login</h3>
-
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" id="username" name="username" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" id="password" name="password" class="form-control" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Login</button>
-        </form>
+        {% include "form.html" %}
     </main>
     <footer class="mt-5 p-4 text-center">
         <a href="https://github.com/CommanderSpinner" class="text-primary">made by commander Spinner</a>
     </footer>
-
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script 
