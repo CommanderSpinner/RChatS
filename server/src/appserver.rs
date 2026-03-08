@@ -78,7 +78,7 @@ impl AppServer {
         let app = Router::new()
             .route("/ws", get(ws_handler))
             .route("/upload/:filetype", post(upload_file)) // dynamic filetype
-            .route("/", get(index))
+            .route("/", post(index))
             //.nest("/media", media_router)
             .with_state(state);
 
