@@ -1,6 +1,5 @@
 use askama::Template;
 use axum::response::Html;
-use tower_cookies::{Cookie, Cookies};
 
 #[derive(Template)]
 #[template(path = "index.html")]
