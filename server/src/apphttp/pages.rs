@@ -5,10 +5,12 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use axum_extra::extract::cookie::{Cookie, CookieJar};
+//use axum_extra::extract::cookie::{Cookie, CookieJar};
 use serde::Deserialize;
 use std::net::SocketAddr;
 use std::collections::HashMap;
+
+use crate::connection::Connection;
 
 #[derive(Template)]
 #[template(path = "index.html")]
@@ -28,7 +30,7 @@ pub async fn login() -> Html<String> {
     Html(page.render().unwrap())
 }
 
-pub async fn interface(jar: CookieJar, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
+pub async fn interface(Form(payload): Form<HashMap<String, String>>) -> Html<String> {
 
     let page = htmlTemplate {
         title: "web acess",
