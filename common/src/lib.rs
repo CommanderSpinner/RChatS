@@ -2,6 +2,14 @@ use serde::{Serialize, Deserialize};
 use colored::*;
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(tag = "type", content = "data")]
+pub enum ClientMessage {
+    CreateUser(create_user),
+    CreateChat(create_chat),
+    CreateMessage(create_message),
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct create_user {
     pub username: String,
     pub plain_password: String,

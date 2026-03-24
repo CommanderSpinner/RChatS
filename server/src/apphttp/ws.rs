@@ -7,7 +7,7 @@ use axum::{
     response::IntoResponse,
 };
 use axum::extract::ws::Message as AxumMessage;
-use common::create_message;
+use common::ClientMessage;
 use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 
@@ -24,10 +24,27 @@ async fn handle_socket(mut socket: WebSocket) {
     common::debug_println!("WebSocket connected");
 
     while let Some(Ok(AxumMessage::Text(text))) = socket.recv().await {
-        if let Ok(msg) = serde_json::from_str::<create_message>(&text) {
-            common::debug_println!("{:?}", msg);
-        } else {
-            common::debug_println!("Failed to parse message");
+        match serde_json::from_str::<ClientMessage>(&text) {
+            Ok(client_msg) => {
+                // 1. Print the whole message here (outside the inner match)
+                common::debug_println!("Received request: {:#?}", client_msg);
+
+                // 2. Now match on the variants to handle specific logic
+                match client_msg {
+                    ClientMessage::CreateUser(data) => {
+                        common::debug_println!("Creating user: {}", data.username);
+                    }
+                    ClientMessage::CreateChat(data) => {
+                        common::debug_println!("Creating chat: {}", data.chatname);
+                    }
+                    ClientMessage::CreateMessage(data) => {
+                        common::debug_println!("Message from {} to {}", data.username, data.to);
+                    }
+                }
+            }
+            Err(e) => {
+                println!("Error deserializing: {}. Raw text: {}", e, text);
+            }
         }
     }
 
