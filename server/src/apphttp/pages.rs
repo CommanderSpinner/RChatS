@@ -1,15 +1,17 @@
 use askama::Template;
 use axum::{
+    extract::State,
     extract::Form,
     response::Html,
     routing::{get, post},
     Router,
 };
+
 //use axum_extra::extract::cookie::{Cookie, CookieJar};
 use serde::Deserialize;
 use std::net::SocketAddr;
 use std::collections::HashMap;
-
+use std::sync::Arc;
 use crate::connection::Connection;
 
 #[derive(Template)]
@@ -30,7 +32,7 @@ pub async fn login() -> Html<String> {
     Html(page.render().unwrap())
 }
 
-pub async fn interface(Form(payload): Form<HashMap<String, String>>) -> Html<String> {
+pub async fn interface(State(conn): State<Arc<Connection>>, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
 
     let page = htmlTemplate {
         title: "web acess",

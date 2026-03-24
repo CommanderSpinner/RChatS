@@ -26,10 +26,10 @@ async fn handle_socket(mut socket: WebSocket) {
     while let Some(Ok(AxumMessage::Text(text))) = socket.recv().await {
         match serde_json::from_str::<ClientMessage>(&text) {
             Ok(client_msg) => {
-                // 1. Print the whole message here (outside the inner match)
+                // print the whole message
                 common::debug_println!("Received request: {:#?}", client_msg);
 
-                // 2. Now match on the variants to handle specific logic
+                // match on the variants to handle specific logic
                 match client_msg {
                     ClientMessage::CreateUser(data) => {
                         common::debug_println!("Creating user: {}", data.username);
