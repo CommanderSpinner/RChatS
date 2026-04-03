@@ -18,7 +18,6 @@ if ($null -eq $clean) { $clean = $false }
 if ($null -eq $package) { $package = $false }
 
 Set-Location $PSScriptRoot
-Set-Location ..
 $Server_root = Get-Location
 
 #getting "target" dir from cargo
@@ -51,13 +50,13 @@ if($clean) {
     cargo clean
 }
 
-rustup target add $Platform
+rustup target add $Platform 
 Write-Output ("building for: {0}" -f $Platform)
 
 #check for debugg or release build
 if($package) {
     Write-Output "release build"
-    cargo build --release --target $Platform
+    cargo build --release --target $Platform 
 } else {
     Write-Output "debug build"
     cargo build --target $Platform
@@ -66,6 +65,4 @@ if($package) {
 # still need to copy files to folders
 # also need to start db server and do cleaning of it
 
-# return to scripts folder
 Set-Location $server_root
-Set-Location scripts
