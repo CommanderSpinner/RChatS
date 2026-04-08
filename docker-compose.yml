@@ -1,3 +1,5 @@
+#example config for the entire service of rchats with psql and the chat server edit as needed
+
 services:
   postgres:
     image: postgres:18
@@ -12,5 +14,15 @@ services:
       - pgdata:/var/lib/postgresql
       - ./init-scripts:/docker-entrypoint-initdb.d
 
+  rchats:
+    image: rchats
+    container_name: rchats
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config:/app/files/server_data/config # need to create te config dir on local folder
+      - chat_data:/app/files/chat_data
+
 volumes:
   pgdata: {} 
+  chat_data: 
