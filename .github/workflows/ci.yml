@@ -35,4 +35,4 @@ jobs:
           context: .
           file: ./Dockerfile.server
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/rchats_server:latest
+          tags: ghcr.io/${{ env.REPO_LOWER }}/rchats_server:latest
