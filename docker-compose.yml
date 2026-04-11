@@ -20,8 +20,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./config:/app/files/server_data/config # need to create te config dir on local folder
-      - chat_data:/app/files/chat_data
+      - ./config:/app/data/ # need to create te config dir on local folder
+      - chat_data:/app/data/chat_data
 
 volumes:
   pgdata: {} 

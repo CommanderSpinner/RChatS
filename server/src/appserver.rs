@@ -32,7 +32,7 @@ impl AppServer {
 
     fn read_conn_string() -> String {
 
-        let config_file = fs::read_to_string("files/server_data/config/db.toml")
+        let config_file = fs::read_to_string("data/config.toml")
             .expect("Failed to read DB!");
 
         let conn_string_value: Value = toml::from_str(&config_file)
@@ -49,13 +49,13 @@ impl AppServer {
     }
 
     fn read_port() -> u16 {
-        let config_file = std::fs::read_to_string("files/server_data/config/rchats.toml")
+        let config_file = std::fs::read_to_string("data/config.toml")
             .expect("Failed to read rchats.toml");
 
         let value: toml::Value = toml::from_str(&config_file)
             .expect("Failed to parse TOML");
 
-        value["config"]["port"]
+        value["rchats"]["port"]
             .as_integer()
             .expect("Port must be an integer") as u16
     }
