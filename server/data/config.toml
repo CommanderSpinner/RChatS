@@ -1,4 +1,4 @@
-[config]
+[rchats]
 port= 8080
 
 [database]
