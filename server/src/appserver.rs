@@ -1,7 +1,7 @@
 use std::fs;
 use toml::Value;
 
-use crate::{apphttp::ws::ws_handler, connection::Connection, apphttp::upload::upload_file, apphttp::pages::login, apphttp::pages::interface};
+use crate::{apphttp::ws::ws_handler, connection::Connection, apphttp::upload::upload_file, apphttp::page::page};
 
 use hyper::Server;
 
@@ -78,8 +78,8 @@ impl AppServer {
         let app = Router::new()
             .route("/ws", get(ws_handler))
             .route("/upload/:filetype", post(upload_file)) // dynamic filetype
-            .route("/", get(login))
-            .route("/", post(interface))
+            .route("/", get(page))
+            .route("/", post(page))
             //.nest("/media", media_router)
             .with_state(state);
 

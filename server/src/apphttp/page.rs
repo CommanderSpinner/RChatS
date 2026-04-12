@@ -21,29 +21,40 @@ struct htmlTemplate<'a> {
     site_content: &'a str,
 }
 
+/*
 pub async fn login() -> Html<String> {
     let page = htmlTemplate {
-        title: "login rchats",
-        site_content: "form",
     };
 
     common::debug_println!("web login access");
 
     Html(page.render().unwrap())
 }
+*/
 
-pub async fn interface(State(conn): State<Arc<Connection>>, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
-
-    let page = htmlTemplate {
-        title: "web acess",
-        site_content: "interface",
-    };
+pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
+    let page: htmlTemplate;
+    
+    common::debug_println!("web interface access");
 
     let username: String = payload.get("user_name").cloned().unwrap_or_default();
     let password: String = payload.get("plain_password").cloned().unwrap_or_default();
 
     common::debug_println!("username: {}", username);
     common::debug_println!("password: {}", password);
+
+    // if cookies are empty login page is displayed
+    if username.is_empty() && password.is_empty() { // change later to validation of credentials
+        page = htmlTemplate {
+            title: "login rchats",
+            site_content: "form",
+        }
+    } else { // otherwise the web interface
+        page = htmlTemplate {
+            title: "web acess",
+            site_content: "interface",
+        }
+    }
 
     Html(page.render().unwrap())
 }

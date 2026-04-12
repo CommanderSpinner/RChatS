@@ -1,3 +1,3 @@
 pub mod ws;
 pub mod upload;
-pub mod pages;
+pub mod page;
