@@ -16,7 +16,7 @@ use crate::connection::Connection;
 
 #[derive(Template)]
 #[template(path = "index.html")]
-struct htmlTemplate<'a> {
+struct HtmlTemplate<'a> {
     title: &'a str,
     site_content: &'a str,
 }
@@ -33,7 +33,7 @@ pub async fn login() -> Html<String> {
 */
 
 pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
-    let page: htmlTemplate;
+    let page: HtmlTemplate;
     
     common::debug_println!("web interface access");
 
@@ -45,12 +45,12 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
 
     // if cookies are empty login page is displayed
     if username.is_empty() && password.is_empty() { // change later to validation of credentials
-        page = htmlTemplate {
+        page = HtmlTemplate {
             title: "login rchats",
             site_content: "form",
         }
     } else { // otherwise the web interface
-        page = htmlTemplate {
+        page = HtmlTemplate {
             title: "web acess",
             site_content: "interface",
         }
