@@ -35,10 +35,12 @@
     </header>
     <main class="py-3 container d-flex justify-content-between align-items-center col-3">
         
-        {% if site_content == "form" %}
-            {% include "form.html" %}
+        {% if site_content == "login" %}
+            {% include "login.html" %}
         {% elif site_content == "interface" %}
             {% include "interface.html" %}
+        {% elif site_content == "create" %}
+            {% include "create.html" %}
         {% endif %}
 
     </main>

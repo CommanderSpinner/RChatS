@@ -1,5 +1,14 @@
 use sqlx::{PgPool, Error, Row};
 
+use argon2::{
+    password_hash::{
+        rand_core::OsRng,
+        PasswordHash, PasswordHasher, PasswordVerifier, SaltString
+    },
+    Argon2
+};
+
+
 //use crate::DB_tables::*;
 use crate::db_tables::user::User;
 use crate::db_tables::message::Message;
@@ -91,14 +100,44 @@ impl Connection {
         Ok(m)
     }
 
-    pub async fn validate_login(&self, username: &str, hashed_password: String) -> Result<bool, sqlx::Error> {
-
-        let login_result = sqlx::query("SELECT * FROM \"users\" WHERE user_name = $1 AND hashed_password = $2;")
+    pub async fn validate_login(&self, username: &str, password_attempt: &str) -> Result<bool, sqlx::Error> {
+        // 1. Fetch the user record by username only
+        let row: Option<(String,)> = sqlx::query_as("SELECT hashed_password FROM \"users\" WHERE user_name = $1")
             .bind(username)
-            .bind(hashed_password)
             .fetch_optional(&self.pool)
             .await?;
 
-        Ok(login_result.is_some())
+        // 2. If user doesn't exist, return false
+        let stored_hash_str = match row {
+            Some(r) => r.0,
+            None => return Ok(false),
+        };
+
+        // 3. Parse the stored hash string into a PasswordHash type
+        let parsed_hash = PasswordHash::new(&stored_hash_str)
+            .map_err(|_| sqlx::Error::Decode("Failed to parse password hash".into()))?;
+
+        // 4. Verify the password attempt against the stored hash
+        // Argon2::default() handles extracting the salt and parameters from the PHC string automatically
+        let is_valid = Argon2::default()
+            .verify_password(password_attempt.as_bytes(), &parsed_hash)
+            .is_ok();
+
+        Ok(is_valid)
     }
+}
+
+
+/// Hashes a password using Argon2id and a random salt.
+/// Returns the full PHC string (e.g., "$argon2id$v=19$m=4096...")
+pub fn hash_password(password: &str) -> Result<String, argon2::password_hash::Error> {
+    let salt = SaltString::generate(&mut OsRng);
+    let argon2 = Argon2::default();
+    
+    // Hash the password and convert to string format for DB storage
+    let password_hash = argon2.hash_password(password.as_bytes(), &salt)?;
+
+    common::debug_println!("{}", password_hash.to_string());
+    
+    Ok(password_hash.to_string())
 }
