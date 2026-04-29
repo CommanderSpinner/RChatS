@@ -10,9 +10,18 @@
     <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
 </form>
 <form method="post" class="p-4 shadow bg-dark text-white" action="/">
-    <input type="hidden" name="create_account" value="true">
-    <button type="submit" class="btn btn-outline-primary w-100">
-            no account? create one
-    </button>
+    {% if first_login %} {# showing create account #}
+        <input type="hidden" name="create_account" value="true">
+    {% else %}
+        <input type="hidden" name="create_account" value="false">
+    {% endif %}
+        <button type="submit" class="btn btn-outline-primary w-100">
+            {% if first_login %} {# text denepnds on if u are on create or login page #}
+                no account? create one 
+            {% else %}
+                already have one? login
+            {% endif %}
+        </button>
+
 </form>
 </div>

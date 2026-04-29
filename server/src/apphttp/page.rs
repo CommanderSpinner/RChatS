@@ -20,6 +20,7 @@ use crate::connection::hash_password;
 struct HtmlTemplate<'a> {
     title: &'a str,
     site_content: &'a str,
+    first_login: bool,
 }
 
 /*
@@ -57,18 +58,23 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
         page = HtmlTemplate {
             title: "web acess",
             site_content: "interface",
+            first_login: false,
         }
     } else if create_account {
             conn.create_user(username, hash_password(&password).expect("something went wrong hashing"));
             page = HtmlTemplate {
                 title: "account creation",
-                site_content: "create",
+                site_content: "login",
+                first_login: false,
             }
+
+            // maybe send code 303 back (prg)
 
     } else { 
         page = HtmlTemplate {
             title: "login rchats",
             site_content: "login",
+            first_login: true,
         };
     }
 
