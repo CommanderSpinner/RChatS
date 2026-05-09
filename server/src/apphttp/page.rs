@@ -20,7 +20,6 @@ use crate::connection::hash_password;
 struct HtmlTemplate<'a> {
     title: &'a str,
     site_content: &'a str,
-    first_login: bool,
 }
 
 /*
@@ -36,46 +35,35 @@ pub async fn login() -> Html<String> {
 
 pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
     let page: HtmlTemplate;
-    
-    common::debug_println!("web interface access");
 
     let username: String = payload.get("user_name").cloned().unwrap_or_default();
     let password: String = payload.get("plain_password").cloned().unwrap_or_default();
-
-    let create_account: bool = payload.get("create_account")
-        .map(|s| s.as_str())              // Convert Option<String> to Option<&str>
-        .unwrap_or("false")               // Default to string "false"
-        .parse()                          // Now you can parse the &str
-        .unwrap_or(false);
+    let action = payload.get("action").map(|s| s.as_str()).unwrap_or_default();
 
     common::debug_println!("username: {}", username);
     common::debug_println!("password: {}", password);
-    common::debug_println!("creating account: {}", create_account);
 
-    if !username.is_empty() && !password.is_empty() { // change later to validation. if true display web interface
-        
-
+    if action == "login" { // change later to validation. if credentials are valid display interfae page
+        common::debug_println!("loging in");
         page = HtmlTemplate {
             title: "web acess",
             site_content: "interface",
-            first_login: false,
         }
-    } else if create_account {
-            conn.create_user(username, hash_password(&password).expect("something went wrong hashing"));
-            page = HtmlTemplate {
-                title: "account creation",
-                site_content: "login",
-                first_login: false,
-            }
-
-            // maybe send code 303 back (prg)
-
-    } else { 
+    } else if action == "create_account" { 
+        common::debug_println!("creating account"); 
+        conn.create_user(username, hash_password(&password).expect("something went wrong hashing"));
         page = HtmlTemplate {
-            title: "login rchats",
+            title: "account creation",
+            site_content: "interface",
+        }
+
+        // maybe send code 303 back (prg)
+
+    } else {
+        page = HtmlTemplate {
+            title: "web acess",
             site_content: "login",
-            first_login: true,
-        };
+        }
     }
 
     Html(page.render().unwrap())
