@@ -51,7 +51,12 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
         }
     } else if action == "create_account" { 
         common::debug_println!("creating account"); 
-        conn.create_user(username, hash_password(&password).expect("something went wrong hashing"));
+        if let Err(e) = conn.create_user(
+            username,
+            hash_password(&password).expect("something went wrong hashing"),
+        ).await {
+            eprintln!("failed to create user: {e}");
+        }
         page = HtmlTemplate {
             title: "account creation",
             site_content: "interface",
