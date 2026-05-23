@@ -63,24 +63,12 @@ impl AppServer {
     pub async fn handle_request(&self) -> anyhow::Result<()> {
         // Wrap DB connection in Arc for shared state
         let state = Arc::new(self.conn.clone());
-
-        // Wrap the static files directory
-        /*
-        let static_files_service = get_service(ServeDir::new("files/server_data/web-app"))
-            .handle_error(|error: std::io::Error| async move {
-                (
-                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("Unhandled internal error: {}", error),
-                )
-            });
-        */
             
         let app = Router::new()
             .route("/ws", get(ws_handler))
             .route("/upload/:filetype", post(upload_file)) // dynamic filetype
             .route("/", get(page))
             .route("/", post(page))
-            //.nest("/media", media_router)
             .with_state(state);
 
         // Read port from config
