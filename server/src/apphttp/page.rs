@@ -42,7 +42,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
     common::debug_println!("username: {}", username);
     common::debug_println!("password: {}", password);
 
-    if action == "login" { // change later to validation. if credentials are valid display interfae page
+    if conn.validate_login(&username, &password).await.unwrap_or(false) { // change later to validation. if credentials are valid display interfae page
         common::debug_println!("loging in");
         page = HtmlTemplate {
             title: "web acess",

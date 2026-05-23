@@ -102,7 +102,7 @@ impl Connection {
 
     pub async fn validate_login(&self, username: &str, plain_password: &str) -> Result<bool, sqlx::Error> {
         // 1. Fetch the user record by username only
-        let row: Option<(String,)> = sqlx::query_as("SELECT hashed_password FROM \"users\" WHERE user_name = $1")
+        let row: Option<(String,)> = sqlx::query_as("SELECT hashed_password FROM \"user\" WHERE user_name = $1")
             .bind(username)
             .fetch_optional(&self.pool)
             .await?;
