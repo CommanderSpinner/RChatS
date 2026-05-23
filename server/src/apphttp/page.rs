@@ -13,7 +13,6 @@ use std::net::SocketAddr;
 use std::collections::HashMap;
 use std::sync::Arc;
 use crate::connection::Connection;
-use crate::connection::hash_password;
 
 #[derive(Template)]
 #[template(path = "index.html")]
@@ -53,7 +52,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
         common::debug_println!("creating account"); 
         if let Err(e) = conn.create_user(
             username,
-            hash_password(&password).expect("something went wrong hashing"),
+            password,
         ).await {
             eprintln!("failed to create user: {e}");
         }

@@ -29,10 +29,10 @@ impl Connection {
     }
 
     // create_user gets parameters directly as vars because hashed password is not in request and gets hashed on server
-    pub async fn create_user(&self, username: String, hashed_password: String) -> Result<(), Error> {
+    pub async fn create_user(&self, username: String, plain_password: String) -> Result<(), Error> {
         sqlx::query("INSERT INTO \"user\" (user_name, hashed_password) VALUES ($1, $2)")
             .bind(username)
-            .bind(hashed_password)
+            .bind(Self::hash_password(&plain_password).expect("Somethign went wrong hashing"))
             .execute(&self.pool)
             .await?;
 
@@ -100,7 +100,7 @@ impl Connection {
         Ok(m)
     }
 
-    pub async fn validate_login(&self, username: &str, password_attempt: &str) -> Result<bool, sqlx::Error> {
+    pub async fn validate_login(&self, username: &str, plain_password: &str) -> Result<bool, sqlx::Error> {
         // 1. Fetch the user record by username only
         let row: Option<(String,)> = sqlx::query_as("SELECT hashed_password FROM \"users\" WHERE user_name = $1")
             .bind(username)
@@ -120,24 +120,25 @@ impl Connection {
         // 4. Verify the password attempt against the stored hash
         // Argon2::default() handles extracting the salt and parameters from the PHC string automatically
         let is_valid = Argon2::default()
-            .verify_password(password_attempt.as_bytes(), &parsed_hash)
+            .verify_password(plain_password.as_bytes(), &parsed_hash)
             .is_ok();
 
         Ok(is_valid)
     }
+
+    // Hashes a password using Argon2id and a random salt.
+    // Returns the full PHC string (e.g., "$argon2id$v=19$m=4096...")
+    fn hash_password(password: &str) -> Result<String, argon2::password_hash::Error> {
+        let salt = SaltString::generate(&mut OsRng);
+        let argon2 = Argon2::default();
+        
+        // Hash the password and convert to string format for DB storage
+        let password_hash = argon2.hash_password(password.as_bytes(), &salt)?;
+
+        common::debug_println!("{}", password_hash.to_string());
+        
+        Ok(password_hash.to_string())
+    }
 }
 
 
-/// Hashes a password using Argon2id and a random salt.
-/// Returns the full PHC string (e.g., "$argon2id$v=19$m=4096...")
-pub fn hash_password(password: &str) -> Result<String, argon2::password_hash::Error> {
-    let salt = SaltString::generate(&mut OsRng);
-    let argon2 = Argon2::default();
-    
-    // Hash the password and convert to string format for DB storage
-    let password_hash = argon2.hash_password(password.as_bytes(), &salt)?;
-
-    common::debug_println!("{}", password_hash.to_string());
-    
-    Ok(password_hash.to_string())
-}

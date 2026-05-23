@@ -43,7 +43,7 @@ async fn handle_socket(mut socket: WebSocket) {
                 }
             }
             Err(e) => {
-                println!("Error deserializing: {}. Raw text: {}", e, text);
+                println!("Error deserializing: {}\n. Raw text: {}", e, text);
             }
         }
     }
