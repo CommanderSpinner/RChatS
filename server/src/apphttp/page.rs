@@ -21,17 +21,6 @@ struct HtmlTemplate<'a> {
     site_content: &'a str,
 }
 
-/*
-pub async fn login() -> Html<String> {
-    let page = htmlTemplate {
-    };
-
-    common::debug_println!("web login access");
-
-    Html(page.render().unwrap())
-}
-*/
-
 pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
     let page: HtmlTemplate;
 
@@ -50,22 +39,28 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
         }
     } else if action == "create_account" { 
         common::debug_println!("creating account"); 
+        let mut title = "web access";
+        let mut  site_content = "interface";
+
         if let Err(e) = conn.create_user(
             username,
             password,
         ).await {
             eprintln!("failed to create user: {e}");
+            title = "login";
+            site_content = "login";
         }
+
         page = HtmlTemplate {
-            title: "account creation",
-            site_content: "interface",
+            title: title,
+            site_content: site_content,
         }
 
         // maybe send code 303 back (prg)
 
     } else {
         page = HtmlTemplate {
-            title: "web acess",
+            title: "login",
             site_content: "login",
         }
     }
