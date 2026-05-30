@@ -65,6 +65,8 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
 
                 if db_err.code().as_deref() == Some("23505") {
                     msg = "User already taken";
+                } else {
+                    msg = "unknown error";
                 }
 
             }
