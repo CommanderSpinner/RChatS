@@ -32,16 +32,23 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
 
     common::debug_println!("username: {}", username);
     common::debug_println!("password: {}", password);
+    common::debug_println!("action: {}", action);
 
-    if conn.validate_login(&username, &password).await.unwrap_or(false) {
-        common::debug_println!("loging in");
-        page = HtmlTemplate {
-            title: "web acess",
-            site_content: "interface",
-            msg: "",
+    if action == "login" {
+        if (conn.validate_login(&username, &password).await.unwrap_or(false)){
+            page = HtmlTemplate {
+                title: "web acess",
+                site_content: "interface",
+                msg: "",
+            }
+        } else {
+            page = HtmlTemplate {
+                title: "login",
+                site_content: "login",
+                msg: "Wrong username or password",
+            };
         }
     } else if action == "create_account" { 
-        common::debug_println!("creating account"); 
         let mut title = "web access";
         let mut  site_content = "interface";
         let mut msg = "";
