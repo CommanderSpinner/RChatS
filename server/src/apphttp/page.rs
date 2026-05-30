@@ -35,7 +35,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
     common::debug_println!("action: {}", action);
 
     if action == "login" {
-        if (conn.validate_login(&username, &password).await.unwrap_or(false)){
+        if conn.validate_login(&username, &password).await.unwrap_or(false){
             page = HtmlTemplate {
                 title: "web acess",
                 site_content: "interface",
