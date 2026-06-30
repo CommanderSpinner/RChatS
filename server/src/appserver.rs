@@ -31,21 +31,50 @@ impl AppServer {
     }
 
     fn read_conn_string() -> String {
-
         let config_file = fs::read_to_string("data/config.toml")
             .expect("Failed to read DB!");
 
-        let conn_string_value: Value = toml::from_str(&config_file)
+        let config: Value = toml::from_str(&config_file)
             .expect("Failed to parse TOML config");
 
-        let connection_string = conn_string_value["database"]["url"]
+        let db = &config["database"];
+
+        let db_type = db["type"]
             .as_str()
             .unwrap();
 
+        let username = db["username"]
+            .as_str()
+            .unwrap();
+
+        let password = db["password"]
+            .as_str()
+            .unwrap();
+
+        let host = db["host"]
+            .as_str()
+            .unwrap();
+
+        let port = db["port"]
+            .as_str()
+            .unwrap();
+
+        let database = "rchats";
+
+        let connection_string = format!(
+            "{}://{}:{}@{}:{}/{}",
+            db_type,
+            username,
+            password,
+            host,
+            port,
+            database
+        );
+
         common::debug_println!("config for db:\n {}", config_file);
         common::debug_println!("conn string: {}", connection_string);
-        
-        connection_string.to_string()
+
+        connection_string
     }
 
     fn read_port() -> u16 {
