@@ -31,21 +31,34 @@ impl AppServer {
     }
 
     fn read_conn_string() -> String {
-
         let config_file = fs::read_to_string("data/config.toml")
             .expect("Failed to read DB!");
 
-        let conn_string_value: Value = toml::from_str(&config_file)
+        let config: toml::Value = toml::from_str(&config_file)
             .expect("Failed to parse TOML config");
 
-        let connection_string = conn_string_value["database"]["url"]
-            .as_str()
-            .unwrap();
+        // Convert the "database" section safely into a Table
+        let db_config = config
+            .get("database")
+            .and_then(|v| v.as_table())
+            .expect("Missing [database] section in config");
+
+        // Extract individual fields cleanly from the table
+        let user = db_config.get("user").and_then(|v| v.as_str()).unwrap_or("admin");
+        let password = db_config.get("password").and_then(|v| v.as_str()).unwrap_or("");
+        let host = db_config.get("host").and_then(|v| v.as_str()).unwrap_or("localhost");
+        
+        // TOML numbers are i64, so we map it to an integer
+        let port = db_config.get("port").and_then(|v| v.as_integer()).unwrap_or(5432);
+        let dbname = db_config.get("dbname").and_then(|v| v.as_str()).unwrap_or("");
+
+        // Build the PostgreSQL connection URL dynamically
+        let connection_string = format!("postgres://{}:{}@{}:{}/{}", user, password, host, port, dbname);
 
         common::debug_println!("config for db:\n {}", config_file);
         common::debug_println!("conn string: {}", connection_string);
         
-        connection_string.to_string()
+        connection_string
     }
 
     fn read_port() -> u16 {
