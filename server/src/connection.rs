@@ -1,4 +1,6 @@
 use sqlx::{PgPool, Error, Row};
+use sqlx::Postgres;
+use sqlx::migrate::MigrateDatabase;
 
 use argon2::{
     password_hash::{
@@ -22,7 +24,26 @@ pub struct Connection {
 
 impl Connection {
     pub async fn new(connection_string: String) -> Result<Connection, Error> {
+        // 1. Check if the database exists
+        if !Postgres::database_exists(&connection_string).await? {
+            println!("Database does not exist. Creating it now...");
+            
+            // 2. Create the database ad-hoc
+            // Under the hood, SQLx strips the dbname, connects to 'postgres', 
+            // issues the CREATE DATABASE command, and disconnects.
+            Postgres::create_database(&connection_string).await?;
+            
+            println!("Database created successfully!");
+        }
+
         let pool = PgPool::connect(&connection_string).await?;
+
+        // creating tables
+        // its always safe because of the if not exists in sql
+        const TABLES: &str = include_str!("sql/create_db.sql");
+        println!("Creating tables if they don't exist");
+        sqlx::raw_sql(TABLES).execute(&pool).await?;
+
         Ok(Connection {
             pool,
         })
