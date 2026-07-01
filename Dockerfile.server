@@ -1,4 +1,4 @@
-FROM rust:1.78 AS builder 
+FROM rust:1.90 AS builder
 
 WORKDIR /app
 
@@ -24,8 +24,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 
-# If your Cargo.toml is inside /app/server, the binary is generated at /app/server/target/release/server
-COPY --from=builder /app/server/target/release/server /app/server
+COPY --from=builder /app/target/release/server /app/server
 
 # Create directories for your bind volumes
 RUN mkdir -p /app/files/chat_data
