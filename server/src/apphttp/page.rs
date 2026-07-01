@@ -7,6 +7,8 @@ use axum::{
     Router,
 };
 
+use axum_extra::extract::cookie::{Cookie, CookieJar};
+
 //use axum_extra::extract::cookie::{Cookie, CookieJar};
 use serde::Deserialize;
 use std::net::SocketAddr;
@@ -23,12 +25,42 @@ struct HtmlTemplate<'a> {
     msg: &'a str,
 }
 
-pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashMap<String, String>>) -> Html<String> {
+pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payload): Form<HashMap<String, String>>) -> (CookieJar, Html<String>) {
     let page: HtmlTemplate;
+    let mut jar = jar;
 
-    let username: String = payload.get("user_name").cloned().unwrap_or_default();
-    let password: String = payload.get("plain_password").cloned().unwrap_or_default();
-    let action = payload.get("action").map(|s| s.as_str()).unwrap_or_default();
+    let username = jar
+        .get("username")
+        .map(|c| c.value().to_string())
+        .unwrap_or_else(|| {
+            payload
+                .get("user_name")
+                .cloned()
+                .unwrap_or_default()
+        });
+
+    let password = jar
+        .get("password")
+        .map(|c| c.value().to_string())
+        .unwrap_or_else(|| {
+            payload
+                .get("plain_password")
+                .cloned()
+                .unwrap_or_default()
+        });
+
+    let action = jar
+        .get("action")
+        .map(|c| c.value().to_string())
+        .unwrap_or_else(|| {
+            payload
+                .get("action")
+                .cloned()
+                .unwrap_or_default()
+        });
+
+
+    //let action = payload.get("action").map(|s| s.as_str()).unwrap_or_default();
 
     common::debug_println!("username: {}", username);
     common::debug_println!("password: {}", password);
@@ -36,6 +68,27 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
 
     if action == "login" {
         if conn.validate_login(&username, &password).await.unwrap_or(false){
+
+            // using cookies for now and later session id
+            jar = jar
+                .add(
+                    Cookie::build("username", username.clone())
+                        .path("/")
+                        .http_only(false)
+                        .finish()
+                )
+                .add(
+                    Cookie::build("password", password.clone())
+                        .path("/")
+                        .http_only(false)
+                        .finish()
+                )
+                .add(
+                    Cookie::build("action", "login")
+                        .path("/")
+                        .http_only(false)
+                        .finish()
+                );
             page = HtmlTemplate {
                 title: "web acess",
                 site_content: "interface",
@@ -91,5 +144,5 @@ pub async fn page(State(conn): State<Arc<Connection>>, Form(payload): Form<HashM
         }
     }
 
-    Html(page.render().unwrap())
+    (jar, Html(page.render().unwrap()))
 }
