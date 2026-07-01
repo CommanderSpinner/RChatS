@@ -34,6 +34,8 @@ impl Connection {
             Postgres::create_database(&connection_string).await?;
             
             println!("Database created successfully!");
+        } else {
+            println!("Database already exists");
         }
 
         let pool = PgPool::connect(&connection_string).await?;
