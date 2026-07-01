@@ -49,22 +49,24 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                 .unwrap_or_default()
         });
 
-    let action = jar
-        .get("action")
-        .map(|c| c.value().to_string())
-        .unwrap_or_else(|| {
-            payload
-                .get("action")
-                .cloned()
-                .unwrap_or_default()
-        });
-
-
-    //let action = payload.get("action").map(|s| s.as_str()).unwrap_or_default();
+    let action = payload.get("action").map(|s| s.as_str()).unwrap_or_default();
 
     common::debug_println!("username: {}", username);
     common::debug_println!("password: {}", password);
     common::debug_println!("action: {}", action);
+
+    // auto login if credentials are set
+    if action != "login" && !username.is_empty() && !password.is_empty() && action != "sign_out" {
+        if conn.validate_login(&username, &password).await.unwrap_or(false) {
+            page = HtmlTemplate {
+                title: "web access",
+                site_content: "interface",
+                msg: "",
+            };
+
+            return (jar, Html(page.render().unwrap()));
+        }
+    }
 
     if action == "login" {
         if conn.validate_login(&username, &password).await.unwrap_or(false){
@@ -79,12 +81,6 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                 )
                 .add(
                     Cookie::build("password", password.clone())
-                        .path("/")
-                        .http_only(false)
-                        .finish()
-                )
-                .add(
-                    Cookie::build("action", "login")
                         .path("/")
                         .http_only(false)
                         .finish()
@@ -136,6 +132,25 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
 
         // maybe send code 303 back (prg)
 
+    } else if action == "sign_out" {
+
+        jar = jar
+            .remove(
+                Cookie::build("username", "")
+                    .path("/")
+                    .finish()
+            )
+            .remove(
+                Cookie::build("password", "")
+                    .path("/")
+                    .finish()
+            );
+
+        page = HtmlTemplate {
+            title: "login",
+            site_content: "login",
+            msg: "",
+        }
     } else {
         page = HtmlTemplate {
             title: "login",
