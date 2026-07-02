@@ -1,13 +1,49 @@
+<div class="d-flex justify-content-center align-items-center h-100">
 
-<div class="border rounded shadow bg-dark text-white">
-    <form method="post" class="p-4 " action="/">
-        <h3 class="mb-4 text-center">Login</h3>
-        <label for="user_name" class="form-label">Username</label>
-        <input type="text" id="user_name" name="user_name" class="form-control" required>
-    
-        <label for="plain_password" class="form-label">Password</label>
-        <input type="password" id="plain_password" name="plain_password" class="form-control" required>
-        <button type="submit" id="login" name="action" class="btn btn-primary w-100 mt-3" value="login">Login</button>
-        <button type="submit" id="create_account" name="action" class="btn btn-outline-primary w-100" value="create_account">Create account</button>
-    </form>
+    <div class="card bg-dark text-light border-secondary shadow-lg"
+         style="width: 100%; max-width: 420px;">
+
+        <div class="card-body p-4">
+
+            <h3 class="text-center mb-4">Login</h3>
+
+            <form method="post" action="/">
+
+                <div class="mb-3">
+                    <label for="user_name" class="form-label">Username</label>
+                    <input type="text"
+                           id="user_name"
+                           name="user_name"
+                           class="form-control bg-dark text-light border-secondary"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="plain_password" class="form-label">Password</label>
+                    <input type="password"
+                           id="plain_password"
+                           name="plain_password"
+                           class="form-control bg-dark text-light border-secondary"
+                           required>
+                </div>
+
+                <button type="submit"
+                        name="action"
+                        value="login"
+                        class="btn btn-primary w-100 mb-2">
+                    Login
+                </button>
+
+                <button type="submit"
+                        name="action"
+                        value="create_account"
+                        class="btn btn-outline-primary w-100">
+                    Create account
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
 </div>

@@ -77,11 +77,11 @@
 </header>
 
     <div class="app-body">
-    <aside class="col-12 col-md-3 col-lg-2 bg-secondary border-end p-2 overflow-auto">
     {% if site_content == "interface" %}
+    <aside class="col-12 col-md-3 col-lg-2 bg-secondary border-end p-2 overflow-auto">
         {% include "interface_sidebar.html" %}
-    {% endif %}
     </aside>
+    {% endif %}
     <main class="flex-grow-1 d-flex flex-column p-3 overflow-hidden">
         
         {% if site_content == "login" %}
