@@ -54,6 +54,11 @@
         {% endif %}
 
     </main>
+    <aside>
+    {% if site_content == "interface" %}
+        {% include "interface_sidebar.html" %}
+    {% endif %}
+    </aside>
     <footer class="mt-5 p-4 text-center">
         <a href="https://github.com/CommanderSpinner" class="text-primary">made by commander Spinner</a>
     </footer>
