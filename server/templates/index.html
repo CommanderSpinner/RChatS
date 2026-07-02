@@ -5,15 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
     <style>
+        html, body {
+            height: 100%;
+        }
+
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
+        }
+
+        .app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-body {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            overflow-y: auto;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #chat-box {
+            flex: 1;
+            overflow-y: auto;
         }
 
         footer {
-            position: fixed;
-            bottom: 0;       
-            left: 0;         
-            width: 100%;
             text-align: center;
         }
 
@@ -30,6 +59,7 @@
     rel="stylesheet">
 </head>
 <body class="bg-dark text-light flex-column min-vh-100">
+<div class="app-container">
     <header class="position-relative py-3 border-bottom">
     <h1 class="text-center m-0">{{ title }}</h1>
 
@@ -45,12 +75,14 @@
     </form>
     {% endif %}
 </header>
+
+    <div class="app-body">
     <aside class="col-12 col-md-3 col-lg-2 bg-secondary border-end p-2 overflow-auto">
     {% if site_content == "interface" %}
         {% include "interface_sidebar.html" %}
     {% endif %}
     </aside>
-    <main class="py-3 container d-flex justify-content-between align-items-center col-3">
+    <main class="flex-grow-1 d-flex flex-column p-3 overflow-hidden">
         
         {% if site_content == "login" %}
             {% include "login.html" %}
@@ -59,9 +91,13 @@
         {% endif %}
 
     </main>
+
+    </div>
     <footer class="mt-5 p-4 text-center">
         <a href="https://github.com/CommanderSpinner" class="text-primary">made by commander Spinner</a>
     </footer>
+
+</div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script 
