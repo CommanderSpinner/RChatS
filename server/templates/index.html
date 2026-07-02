@@ -30,9 +30,21 @@
     rel="stylesheet">
 </head>
 <body class="bg-dark text-light">
-    <header class="text-white py-3 bg-dark text-center">
-        <h1>{{ title }}</h1>
-    </header>
+    <header class="position-relative py-3 border-bottom">
+    <h1 class="text-center m-0">{{ title }}</h1>
+
+    {% if site_content == "interface" %}
+    <form method="post" action="/" class="position-absolute top-50 end-0 translate-middle-y me-4 m-0">
+        <button
+            type="submit"
+            name="action"
+            value="sign_out"
+            class="btn btn-outline-danger">
+            Sign out
+        </button>
+    </form>
+    {% endif %}
+</header>
     <main class="py-3 container d-flex justify-content-between align-items-center col-3">
         
         {% if site_content == "login" %}
