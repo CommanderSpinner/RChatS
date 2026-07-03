@@ -110,10 +110,13 @@
         if (error !== "") {
             alert(error);
         }
-
+    </script>
+    {% if site_content == "interface" %}
+    <script>
         {% include "chat.js" %}
         {% include "contacts.js" %}
         {% include "add_contacts.js" %}
     </script>
+    {% endif %}
 </body>
 </html>
