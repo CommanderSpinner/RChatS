@@ -1,9 +1,7 @@
 use std::fs;
 use toml::Value;
-
+use tokio::net::TcpListener;
 use crate::{apphttp::ws::ws_handler, connection::Connection, apphttp::upload::upload_file, apphttp::page::page};
-
-use hyper::Server;
 
 use axum::{
     Router,
@@ -11,7 +9,7 @@ use axum::{
 };
 use std::{net::SocketAddr, sync::Arc};
 use tower_http::services::ServeDir;
-
+use axum::serve;
 
 pub struct AppServer {
     conn: Connection,
@@ -90,9 +88,9 @@ impl AppServer {
 
         println!("Server listening on {}", addr);
 
-        Server::bind(&addr)
-            .serve(app.into_make_service())
-            .await?;
+        let listener = TcpListener::bind(addr).await?;
+
+        axum::serve(listener, app).await?;
 
         Ok(())
     }

@@ -9,17 +9,16 @@ common = { path = "../common" }
 tokio = { version = "1", features = ["full"] }
 sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "macros", "postgres", "migrate"] }
 
-axum = { version = "0.6", features = ["ws", "multipart"] }
-tower-http = { version = "0.3", features = ["fs"] }
+axum = { version = "0.7", features = ["ws", "multipart"] }
+tower-http = { version = "0.5", features = ["fs"] }
 
 serde = { version = "1", features = ["derive"] }
 toml = "0.9.6"
 anyhow = "1"
-hyper = { version = "0.14", features = ["full"] }
 colored = "3.1.1"
 serde_json = "1.0.149"
 askama = "0.15.4"
-axum-extra = { version = "0.7", features = ["cookie"] }
+axum-extra = { version = "0.9", features = ["cookie"] }
 
 argon2 = "0.5"
 password-hash = "0.5"

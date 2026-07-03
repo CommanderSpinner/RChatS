@@ -74,16 +74,16 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
             // using cookies for now and later session id
             jar = jar
                 .add(
-                    Cookie::build("username", username.clone())
+                    Cookie::build(("username", username.clone()))
                         .path("/")
                         .http_only(false)
-                        .finish()
+                        .build()
                 )
                 .add(
-                    Cookie::build("password", password.clone())
+                    Cookie::build(("password", password.clone()))
                         .path("/")
                         .http_only(false)
-                        .finish()
+                        .build()
                 );
             page = HtmlTemplate {
                 title: "web acess",
@@ -133,18 +133,9 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
         // maybe send code 303 back (prg)
 
     } else if action == "sign_out" {
-
         jar = jar
-            .remove(
-                Cookie::build("username", "")
-                    .path("/")
-                    .finish()
-            )
-            .remove(
-                Cookie::build("password", "")
-                    .path("/")
-                    .finish()
-            );
+            .remove(Cookie::named("username"))
+            .remove(Cookie::named("password"));
 
         page = HtmlTemplate {
             title: "login",
