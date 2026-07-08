@@ -19,7 +19,7 @@ pub async fn ws_handler(
 ) -> impl IntoResponse {
     ws.on_upgrade(handle_socket)
 }
-
+// it should be added that the json request ids get stored so if the get send twice they dont get executed twice
 async fn handle_socket(mut socket: WebSocket) {
     common::debug_println!("WebSocket connected");
 
