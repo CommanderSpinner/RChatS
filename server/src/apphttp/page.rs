@@ -26,7 +26,7 @@ struct HtmlTemplate<'a> {
 }
 
 pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payload): Form<HashMap<String, String>>) -> (CookieJar, Html<String>) {
-    let page: HtmlTemplate;
+    let mut page: HtmlTemplate;
     let mut jar = jar;
 
     let username = jar
@@ -70,6 +70,22 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
 
     if action == "login" {
         if conn.validate_login(&username, &password).await.unwrap_or(false){
+            page = HtmlTemplate {
+                title: "web acess",
+                site_content: "interface",
+                msg: "",
+            };
+
+            //is for username propably will be replaced by session id later
+            let uid = match conn.get_uid(&username).await {
+                Ok(uid) => uid,
+                Err(err) => {
+                    eprintln!("get_uid failed: {}", err);
+                    page.msg = "DB error";
+
+                    return (jar, Html(page.render().unwrap()));
+                }
+            };
 
             // using cookies for now and later session id
             jar = jar
@@ -84,12 +100,14 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                         .path("/")
                         .http_only(false)
                         .build()
+                )
+                .add(
+                    Cookie::build((("userid", uid.to_string())))
+                        .path("/")
+                        .http_only(false)
+                        .build()
                 );
-            page = HtmlTemplate {
-                title: "web acess",
-                site_content: "interface",
-                msg: "",
-            }
+            
         } else {
             page = HtmlTemplate {
                 title: "login",
@@ -135,7 +153,8 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
     } else if action == "sign_out" {
         jar = jar
             .remove(Cookie::named("username"))
-            .remove(Cookie::named("password"));
+            .remove(Cookie::named("password"))
+            .remove(Cookie::named("userid"));
 
         page = HtmlTemplate {
             title: "login",
