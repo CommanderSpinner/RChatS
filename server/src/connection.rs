@@ -93,7 +93,7 @@ impl Connection {
 
     // read out matching uid from db
     pub async fn get_uid(&self, username: &str) -> Result<i64, sqlx::Error> {
-        let user = sqlx::query("SELECT * FROM \"user\" WHERE username= $1")
+        let user = sqlx::query("SELECT * FROM \"user\" WHERE user_name= $1")
             .bind(username)
             .fetch_one(&self.pool)
             .await?;

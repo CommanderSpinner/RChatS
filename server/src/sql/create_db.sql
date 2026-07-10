@@ -1,6 +1,6 @@
 
 CREATE TABLE IF NOT EXISTS "user" (
-    uid SERIAL PRIMARY KEY,
+    uid BIGSERIAL PRIMARY KEY,
     user_name VARCHAR(100) UNIQUE NOT NULL,
     hashed_password TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
@@ -14,9 +14,9 @@ CREATE TABLE "type" (
 */
 
 CREATE TABLE IF NOT EXISTS chat (
-    cid SERIAL PRIMARY KEY,
+    cid BIGSERIAL PRIMARY KEY,
     chat_name VARCHAR(100),
-    user_ids INTEGER[] NOT NULL CHECK (array_length(user_ids, 1) = 2), 
+    user_ids BIGINT[] NOT NULL CHECK (array_length(user_ids, 1) = 2), 
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -29,9 +29,9 @@ CREATE TABLE IF NOT EXISTS user_chats (
 */
 
 CREATE TABLE IF NOT EXISTS message (
-    mid SERIAL PRIMARY KEY,
-    cid INT NOT NULL REFERENCES chat(cid) ON DELETE CASCADE,
-    uid INT NOT NULL REFERENCES "user"(uid) ON DELETE CASCADE,
+    mid BIGSERIAL PRIMARY KEY,
+    cid BIGINT NOT NULL REFERENCES chat(cid) ON DELETE CASCADE,
+    uid BIGINT NOT NULL REFERENCES "user"(uid) ON DELETE CASCADE,
     url VARCHAR NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
