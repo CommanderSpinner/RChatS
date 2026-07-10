@@ -23,6 +23,7 @@ struct HtmlTemplate<'a> {
     title: &'a str,
     site_content: &'a str,
     msg: &'a str,
+    username: String,
 }
 
 pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payload): Form<HashMap<String, String>>) -> (CookieJar, Html<String>) {
@@ -62,6 +63,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                 title: "web access",
                 site_content: "interface",
                 msg: "",
+                username: username.clone().to_string(),
             };
 
             return (jar, Html(page.render().unwrap()));
@@ -74,6 +76,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                 title: "web acess",
                 site_content: "interface",
                 msg: "",
+                username: username.clone().to_string(),
             };
 
             //is for username propably will be replaced by session id later
@@ -113,6 +116,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                 title: "login",
                 site_content: "login",
                 msg: "Wrong username or password",
+                username: "".to_string(),
             };
         }
     } else if action == "create_account" { 
@@ -146,6 +150,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
             title: title,
             site_content: site_content,
             msg: msg,
+                username: "".to_string(),
         }
 
         // maybe send code 303 back (prg)
@@ -160,12 +165,14 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
             title: "login",
             site_content: "login",
             msg: "",
+            username: "".to_string(),
         }
     } else {
         page = HtmlTemplate {
             title: "login",
             site_content: "login",
             msg: "",
+            username: "".to_string(),
         }
     }
 
