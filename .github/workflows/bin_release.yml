@@ -1,0 +1,54 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - "v*"
+
+
+permissions:
+    contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Prepare release folder
+        run: |
+          mkdir -p release/rchats/data/chat_data
+
+          cp target/release/rchats release/rchats/
+
+          cat > release/rchats/data/config.toml <<'EOF'
+          [rchats]
+          port = 8080
+
+          [database]
+          user = "admin"
+          password = "securepasswd123"
+          host = "localhost"
+          port = 5432
+          dbname = "rchats"
+          EOF
+
+      - name: Create ZIP
+        run: |
+          cd release
+          zip -r rchats-linux.zip rchats
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: false
+          files: |
+            release/rchats-linux.zip
