@@ -1,13 +1,12 @@
 name: Release
 
 on:
-    push:
-      tags:
+  push:
+    tags:
       - 'v*'
 
-
 permissions:
-    contents: write
+  contents: write
 
 jobs:
   build-release:
@@ -25,10 +24,13 @@ jobs:
 
       - name: Prepare release folder
         run: |
+          # 1. Create the nested directory structure
           mkdir -p release/rchats/data/chat_data
 
-          cp target/release/rchats release/rchats/
+          # 2. Copy "server" from target/release and rename it to "rchats"
+          cp target/release/server release/rchats/rchats
 
+          # 3. Create the default configuration file
           cat > release/rchats/data/config.toml <<'EOF'
           [rchats]
           port = 8080
