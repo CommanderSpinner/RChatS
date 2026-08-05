@@ -8,7 +8,7 @@ btn_contacts.addEventListener("click", function () {
   const createChat = {
     type: "CreateChat",
     data: {
-      chatname: "My first chat",
+      chatname: "My first chat", // need to work on naming the chats
       userids: [Number(uid1), Number(uid2)]
     }
   };
