@@ -7,8 +7,10 @@ btn_contacts.addEventListener("click", function () {
   let uid2 = prompt("Enter user ID of your contact");
   const createChat = {
     type: "CreateChat",
-    chatname: "My first chat",
-    userids: [uid1, uid2]
+    data: {
+      chatname: "My first chat",
+      userids: [Number(uid1), Number(uid2)]
+    }
   };
 
     chat.send(createChat);
