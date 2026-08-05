@@ -2,3 +2,5 @@
 Cargo.lock
 .env
 
+rcahts.session.sql
+.vscode/settings.json
