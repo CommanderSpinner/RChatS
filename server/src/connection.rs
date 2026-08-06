@@ -62,6 +62,10 @@ impl Connection {
         Ok(())
     }
 
+    pub async fn get_contacts(&self, uid: i64) -> Vec<String> {
+
+    }
+
     pub async fn create_chat(&self, c: &common::create_chat) -> Result<(), Error> {
         sqlx::query("INSERT INTO chat(chat_name, user_ids) VALUES ($1, ARRAY[$2, $3])")
             .bind(c.chatname.clone())

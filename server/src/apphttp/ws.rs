@@ -52,6 +52,10 @@ async fn handle_socket(
                     ClientMessage::CreateMessage(data) => {
                         common::debug_println!("Message from {} to {}", data.username, data.to);
                     }
+                    ClientMessage::GetContacts(data) => {
+                                common::debug_println!("getting contacts for: {}", data.userid);
+
+                    }
                 }
             }
             Err(e) => {
