@@ -121,9 +121,10 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
             };
         }
     } else if action == "create_account" { 
-        let mut title = "web access";
-        let mut  site_content = "interface";
-        let mut msg = "";
+
+        let title = "login";
+        let site_content = "login";
+        let mut msg = "account created";
 
         if let Err(e) = conn.create_user(
             username,
@@ -142,9 +143,6 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                 }
 
             }
-
-            title = "login";
-            site_content = "login";
         }
 
         page = HtmlTemplate {
