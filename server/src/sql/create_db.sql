@@ -16,7 +16,7 @@ CREATE TABLE "type" (
 CREATE TABLE IF NOT EXISTS chat (
     cid BIGSERIAL PRIMARY KEY,
     chat_name VARCHAR(100),
-    user_ids BIGINT[] NOT NULL CHECK (array_length(user_ids, 1) = 2), 
+    user_ids BIGINT[] NOT NULL UNIQUE CHECK (array_length(user_ids, 1) = 2), 
     created_at TIMESTAMP DEFAULT NOW()
 );
 
