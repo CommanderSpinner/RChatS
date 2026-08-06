@@ -7,6 +7,7 @@ pub enum ClientMessage {
     CreateUser(create_user),
     CreateChat(create_chat),
     CreateMessage(create_message),
+    GetContacts(get_contacts),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -28,6 +29,12 @@ pub struct create_message {
     pub to: String, // to is to which username it will be send 
     pub content: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct get_contacts {
+    pub userid: i64,
+}
+
 
 // macros for debugging
 
