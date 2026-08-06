@@ -62,8 +62,7 @@ impl Connection {
         Ok(())
     }
 
-    pub async fn get_contacts(&self, uid: i64) -> Vec<String> {
-    }
+    //pub async fn get_contacts(&self, uid: i64) -> Vec<String> {}
 
     pub async fn create_chat(&self, c: &common::create_chat) -> Result<(), Error> {
     let mut tx = self.pool.begin().await?;

@@ -89,6 +89,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                     return (jar, Html(page.render().unwrap()));
                 }
             };
+            common::debug_println!("SETTING COOKIE UID: {}", uid);
 
             // using cookies for now and later session id
             jar = jar
