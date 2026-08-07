@@ -149,7 +149,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
             title: title,
             site_content: site_content,
             msg: msg,
-                username: "".to_string(),
+            username: "".to_string(),
         }
 
         // maybe send code 303 back (prg)
