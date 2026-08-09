@@ -75,7 +75,7 @@ impl Connection {
     .await?;
 
     sqlx::query(
-        "INSERT INTO user_chats(uid, cid) VALUES ($1, $2), ($3, $2)"
+        "INSERT INTO user_chat(uid, cid) VALUES ($1, $2), ($3, $2)"
     )
     .bind(c.userids[0])
     .bind(cid)
@@ -122,7 +122,7 @@ impl Connection {
         let cid = sqlx::query_scalar(
             "
             SELECT cid
-            FROM user_chats
+            FROM user_chat
             WHERE uid IN ($1, $2)
             GROUP BY cid
             HAVING COUNT(*) = 2
