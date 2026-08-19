@@ -30,5 +30,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile.server
+          network: host
           push: true
           tags: ghcr.io/commanderspinner/rchats_server:latest
