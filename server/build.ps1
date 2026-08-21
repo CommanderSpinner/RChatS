@@ -65,8 +65,26 @@ if($package) {
     cargo build --target $Platform
 }
 
-# copy files to folders
-# coping only stuff that is needed not the docker compose file for debuging
+# copy files to target, excluding db_server(its only files for debuging)
+Write-Output "Copying data folder..."
+
+$data_source = Join-Path $Server_root "data"
+$data_target = Join-Path $target_dir "data"
+
+if (Test-Path $data_source) {
+    # Create target data directory
+    New-Item -ItemType Directory -Path $data_target -Force | Out-Null
+
+    # Copy everything recursively except db_server
+    Get-ChildItem -Path $data_source -Force |
+        Where-Object { $_.Name -ne "db_server" } |
+        Copy-Item -Destination $data_target -Recurse -Force
+
+    Write-Output "Data copied to: $data_target"
+    Write-Output "Excluded: $data_source/db_server"
+} else {
+    Write-Output "No data directory found at: $data_source"
+}
 
 
 # also need to start db server and do cleaning of it - -- - - - -- - -
