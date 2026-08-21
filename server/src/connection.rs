@@ -62,7 +62,28 @@ impl Connection {
         Ok(())
     }
 
-    //pub async fn get_contacts(&self, uid: i64) -> Vec<String> {}
+    pub async fn get_contacts(
+        &self,
+        uid: i64,
+    ) -> Result<Vec<User>, sqlx::Error> {
+        let contacts = sqlx::query_as::<_, User>(
+            r#"
+            SELECT DISTINCT u.*
+            FROM "user" u
+            INNER JOIN user_chat uc
+                ON u.uid = uc.uid
+            INNER JOIN user_chat uc_x
+                ON uc.cid = uc_x.cid
+            WHERE uc_x.uid = $1
+            AND u.uid != $1
+            "#
+        )
+        .bind(uid)
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(contacts)
+    }
 
     pub async fn create_chat(&self, c: &common::create_chat) -> Result<(), Error> {
     let mut tx = self.pool.begin().await?;
