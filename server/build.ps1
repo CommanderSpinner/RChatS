@@ -24,8 +24,11 @@ $Server_root = Get-Location
 Set-Location ..
 mkdir target
 Set-Location target
-$target_dir = Get-Location
-
+if($package) {
+    $target_dir = "$(Get-Location)/$platform/release"
+} else {
+    $target_dir = "$(Get-Location)/$platform/debug"
+}
 #getting dir of platform target
 mkdir $Platform
 Set-Location $Platform
@@ -62,7 +65,18 @@ if($package) {
     cargo build --target $Platform
 }
 
-# still need to copy files to folders
-# also need to start db server and do cleaning of it
+# copy files to folders
+# coping only stuff that is needed not the docker compose file for debuging
+
+
+# also need to start db server and do cleaning of it - -- - - - -- - -
+
+
+if($package){
+    #unfinnished
+} else {
+    Set-Location $target_dir
+    Start-Process "server"
+}
 
 Set-Location $server_root
