@@ -22,21 +22,24 @@ $Server_root = Get-Location
 
 #getting "target" dir from cargo
 Set-Location ..
-mkdir target
+New-Item -ItemType Directory -Path target -Force | Out-Null
 Set-Location target
+
 if($package) {
     $target_dir = "$(Get-Location)/$platform/release"
 } else {
     $target_dir = "$(Get-Location)/$platform/debug"
 }
+
 #getting dir of platform target
-mkdir $Platform
+New-Item -ItemType Directory -Path $Platform -Force | Out-Null
 Set-Location $Platform
+
 if($package){
-    mkdir release
+    New-Item -ItemType Directory -Path release -Force | Out-Null
     Set-Location release
 } else {
-    mkdir debug
+    New-Item -ItemType Directory -Path debug -Force | Out-Null
     Set-Location debug
 }
 
@@ -56,7 +59,7 @@ if($clean) {
 rustup target add $Platform 
 Write-Output ("building for: {0}" -f $Platform)
 
-#check for debugg or release build
+#check for debug or release build
 if($package) {
     Write-Output "release build"
     cargo build --release --target $Platform 
@@ -65,7 +68,7 @@ if($package) {
     cargo build --target $Platform
 }
 
-# copy files to target, excluding db_server(its only files for debuging)
+# copy files to target, excluding db_server (its only files for debugging)
 Write-Output "Copying data folder..."
 
 $data_source = Join-Path $Server_root "data"
@@ -91,7 +94,7 @@ if (Test-Path $data_source) {
 
 
 if($package){
-    #unfinnished
+    # unfinished
 } else {
     Set-Location $target_dir
     Start-Process "server"
