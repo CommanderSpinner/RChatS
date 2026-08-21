@@ -94,7 +94,7 @@ if (Test-Path $data_source) {
 
 
 if($package){
-    # unfinished
+    Compress-Archive -Path "$target_dir/server", "$target_dir/data" -DestinationPath "$target_dir/server.zip" -Force
 } else {
     Set-Location $target_dir
     Start-Process "server"
