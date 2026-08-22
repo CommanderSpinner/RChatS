@@ -91,6 +91,11 @@ if (Test-Path $data_source) {
 
 
 # also need to start db server and do cleaning of it - -- - - - -- - -
+if(!$package) {
+    Set-Location "data/db_server"
+    docker compose up -d
+    Set-Location $Server_root
+}
 
 
 if($package){
