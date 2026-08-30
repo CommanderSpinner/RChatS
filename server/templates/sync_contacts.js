@@ -5,7 +5,7 @@ function sync_contacts() {
     const get_contacts = {
         type: "GetContacts",
         data: {
-            userid: uid
+            userid: Number(uid)
         }
     };
 

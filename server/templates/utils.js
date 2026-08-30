@@ -16,6 +16,10 @@ class ChatSocket {
     this.socket.addEventListener("close", () => {
       console.log("Disconnected");
     });
+
+    this.socket.addEventListener("message", (event) => {
+      this.onMessage(event);
+    });
   }
 
   #generateId() {
@@ -36,6 +40,22 @@ class ChatSocket {
       this.queue.push(message);
     }
   }
+
+  onMessage(event) {
+  const data = JSON.parse(event.data);
+
+
+  console.log("Received from server:", data);
+
+  if (data.type === "Contacts") {
+    const contacts = data.data;
+
+      contacts.forEach(([id, name]) => {
+          console.log("ID:", id);
+          console.log("Name:", name);
+      });
+  }
+}
 }
 
 const chat = new ChatSocket();
