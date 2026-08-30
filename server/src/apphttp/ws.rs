@@ -53,8 +53,34 @@ async fn handle_socket(
                         common::debug_println!("Message from {} to {}", data.username, data.to);
                     }
                     ClientMessage::GetContacts(data) => {
-                                common::debug_println!("getting contacts for: {}", data.userid);
+                        common::debug_println!("Getting contacts for: {}", data.userid);
 
+                        match conn.get_contacts(data.userid).await {
+                            Ok(users) => {
+                                let contacts: Vec<(i64, String)> = users
+                                    .into_iter()
+                                    .map(|user| (user.uid, user.user_name))
+                                    .collect();
+
+                                let response = serde_json::json!({
+                                    "type": "Contacts",
+                                    "data": contacts
+                                });
+
+                                let json = response.to_string();
+
+                                common::debug_println!("Sending JSON: {}", json);
+
+                                if let Err(e) = socket.send(AxumMessage::Text(json.into())).await {
+                                    eprintln!("Failed to send contacts: {}", e);
+                                    break;
+                                }
+                            }
+
+                            Err(e) => {
+                                eprintln!("Failed to get contacts: {}", e);
+                            }
+                        }
                     }
                 }
             }
