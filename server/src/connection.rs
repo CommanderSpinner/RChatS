@@ -62,20 +62,52 @@ impl Connection {
         Ok(())
     }
 
-    pub async fn get_contacts(&self, uid: i64) -> Vec<String> {
+    pub async fn get_contacts(
+        &self,
+        uid: i64,
+    ) -> Result<Vec<User>, sqlx::Error> {
+        let contacts = sqlx::query_as::<_, User>(
+            r#"
+            SELECT DISTINCT u.*
+            FROM "user" u
+            INNER JOIN user_chat uc
+                ON u.uid = uc.uid
+            INNER JOIN user_chat uc_x
+                ON uc.cid = uc_x.cid
+            WHERE uc_x.uid = $1
+            AND u.uid != $1
+            "#
+        )
+        .bind(uid)
+        .fetch_all(&self.pool)
+        .await?;
 
+        Ok(contacts)
     }
 
     pub async fn create_chat(&self, c: &common::create_chat) -> Result<(), Error> {
-        sqlx::query("INSERT INTO chat(chat_name, user_ids) VALUES ($1, ARRAY[$2, $3])")
-            .bind(c.chatname.clone())
-            .bind(c.userids[0])
-            .bind(c.userids[1])
-            .execute(&self.pool)
-            .await?;
+    let mut tx = self.pool.begin().await?;
 
-        Ok(())
-    }
+    let cid: i64 = sqlx::query_scalar(
+        "INSERT INTO chat(chat_name) VALUES ($1) RETURNING cid"
+    )
+    .bind(&c.chatname)
+    .fetch_one(&mut *tx)
+    .await?;
+
+    sqlx::query(
+        "INSERT INTO user_chat(uid, cid) VALUES ($1, $2), ($3, $2)"
+    )
+    .bind(c.userids[0])
+    .bind(cid)
+    .bind(c.userids[1])
+    .execute(&mut *tx)
+    .await?;
+
+    tx.commit().await?;
+
+    Ok(())
+}
 
     pub async fn create_message(&self, m: &common::create_message) -> Result<(), Error> {
         let from_uid = self.get_uid(&m.username).await?;
@@ -108,11 +140,19 @@ impl Connection {
 
     // read out matching cid from db
     pub async fn get_cid(&self, from: i64, to: i64) -> Result<i64, sqlx::Error> {
-        let cid = sqlx::query_scalar("SELECT cid FROM chat WHERE user_ids = ARRAY[$1, $2] OR user_ids = ARRAY[$2, $1]")
-            .bind(from)
-            .bind(to)
-            .fetch_one(&self.pool)
-            .await?;
+        let cid = sqlx::query_scalar(
+            "
+            SELECT cid
+            FROM user_chat
+            WHERE uid IN ($1, $2)
+            GROUP BY cid
+            HAVING COUNT(*) = 2
+            "
+        )
+        .bind(from)
+        .bind(to)
+        .fetch_one(&self.pool)
+        .await?;
 
         Ok(cid)
     }

@@ -18,6 +18,7 @@
     <p class="position-absolute top-50 start-0 translate-middle-y ms-4 m-0">
     Logged in as: {{ username }}
     </p>
+    <p id="uid" class="position-absolute top-50 start-0 translate-middle-y ms-4 m-4"></p>
     {% endif %}
 
     <h1 class="text-center m-0">{{ title }}</h1>
@@ -77,6 +78,12 @@
 
         if (error !== "") {
             alert(error);
+        }
+
+        // display username
+        const uid_paragraph = document.getElementById("uid");
+        if (uid_paragraph) {
+            uid_paragraph.textContent = "User ID: " + getCookie("userid");;
         }
     </script>
 </body>

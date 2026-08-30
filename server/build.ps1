@@ -22,18 +22,24 @@ $Server_root = Get-Location
 
 #getting "target" dir from cargo
 Set-Location ..
-mkdir target
+New-Item -ItemType Directory -Path target -Force | Out-Null
 Set-Location target
-$target_dir = Get-Location
+
+if($package) {
+    $target_dir = "$(Get-Location)/$platform/release"
+} else {
+    $target_dir = "$(Get-Location)/$platform/debug"
+}
 
 #getting dir of platform target
-mkdir $Platform
+New-Item -ItemType Directory -Path $Platform -Force | Out-Null
 Set-Location $Platform
+
 if($package){
-    mkdir release
+    New-Item -ItemType Directory -Path release -Force | Out-Null
     Set-Location release
 } else {
-    mkdir debug
+    New-Item -ItemType Directory -Path debug -Force | Out-Null
     Set-Location debug
 }
 
@@ -53,7 +59,7 @@ if($clean) {
 rustup target add $Platform 
 Write-Output ("building for: {0}" -f $Platform)
 
-#check for debugg or release build
+#check for debug or release build
 if($package) {
     Write-Output "release build"
     cargo build --release --target $Platform 
@@ -62,7 +68,41 @@ if($package) {
     cargo build --target $Platform
 }
 
-# still need to copy files to folders
-# also need to start db server and do cleaning of it
+# copy files to target, excluding db_server (its only files for debugging)
+Write-Output "Copying data folder..."
+
+$data_source = Join-Path $Server_root "data"
+$data_target = Join-Path $target_dir "data"
+
+if (Test-Path $data_source) {
+    # Create target data directory
+    New-Item -ItemType Directory -Path $data_target -Force | Out-Null
+
+    # Copy everything recursively except db_server
+    Get-ChildItem -Path $data_source -Force |
+        Where-Object { $_.Name -ne "db_server" } |
+        Copy-Item -Destination $data_target -Recurse -Force
+
+    Write-Output "Data copied to: $data_target"
+    Write-Output "Excluded: $data_source/db_server"
+} else {
+    Write-Output "No data directory found at: $data_source"
+}
+
+
+# also need to start db server and do cleaning of it - -- - - - -- - -
+if(!$package) {
+    Set-Location "data/db_server"
+    docker compose up -d
+    Set-Location $Server_root
+}
+
+
+if($package){
+    Compress-Archive -Path "$target_dir/server", "$target_dir/data" -DestinationPath "$target_dir/server.zip" -Force
+} else {
+    Set-Location $target_dir
+    Start-Process "server"
+}
 
 Set-Location $server_root

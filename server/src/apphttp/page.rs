@@ -89,6 +89,7 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                     return (jar, Html(page.render().unwrap()));
                 }
             };
+            common::debug_println!("SETTING COOKIE UID: {}", uid);
 
             // using cookies for now and later session id
             jar = jar
@@ -120,9 +121,10 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
             };
         }
     } else if action == "create_account" { 
-        let mut title = "web access";
-        let mut  site_content = "interface";
-        let mut msg = "";
+
+        let title = "login";
+        let site_content = "login";
+        let mut msg = "account created";
 
         if let Err(e) = conn.create_user(
             username,
@@ -141,16 +143,13 @@ pub async fn page(State(conn): State<Arc<Connection>>, jar: CookieJar, Form(payl
                 }
 
             }
-
-            title = "login";
-            site_content = "login";
         }
 
         page = HtmlTemplate {
             title: title,
             site_content: site_content,
             msg: msg,
-                username: "".to_string(),
+            username: "".to_string(),
         }
 
         // maybe send code 303 back (prg)
