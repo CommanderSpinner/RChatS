@@ -44,22 +44,40 @@ class ChatSocket {
   onMessage(event) {
     const data = JSON.parse(event.data);
 
-
     console.log("Received from server:", data);
-
 
     if (data.type === "Contacts") {
       const container = document.getElementById("new_contacts");
-      container.innerHTML = ""; // clear old buttons so repeated messages don't duplicate
+      container.innerHTML = "";
 
       data.data.forEach(([id, username]) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "list-group-item list-group-item-action";
+        btn.className = "btn btn-dark border-light text-start text-truncate w-100 d-flex align-items-center gap-2 py-2 px-3";
         btn.dataset.contactId = id;
-        btn.textContent = username; // textContent (not innerHTML) avoids XSS from contact names
 
-        btn.addEventListener("click", () => this.onContactClick(id, username));
+        // round avatar with the first letter
+        const avatar = document.createElement("span");
+        avatar.className = "badge rounded-2 bg-secondary text-dark text-uppercase";
+        avatar.textContent = username.charAt(0);
+
+        const label = document.createElement("span");
+        label.className = "flex-grow-1 text-truncate";
+        label.textContent = username;
+
+        btn.append(avatar, label);
+
+        btn.addEventListener("click", () => {
+          // reset all contact buttons, then highlight the clicked one
+          container.querySelectorAll("button").forEach(b => {
+            b.classList.remove("active", "btn-primary");
+            b.classList.add("btn-dark");
+          });
+          btn.classList.remove("btn-dark");
+          btn.classList.add("active", "btn-primary");
+
+          this.onContactClick(id, username);
+        });
 
         container.appendChild(btn);
       });
@@ -67,7 +85,7 @@ class ChatSocket {
   }
 
   onContactClick(id, username) {
-    console.log("Clicked contact:", id, name);
+    console.log("Clicked contact:", id, username);
     // open chat, load messages, etc.
   }
 }
