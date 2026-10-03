@@ -24,7 +24,7 @@ class ChatSocket {
 
   #generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substring(2);
-   }
+  }
 
   send(data) {
     let id = this.#generateId()
@@ -42,21 +42,37 @@ class ChatSocket {
   }
 
   onMessage(event) {
-  const data = JSON.parse(event.data);
+    const data = JSON.parse(event.data);
 
 
-  console.log("Received from server:", data);
+    console.log("Received from server:", data);
 
-  if (data.type === "Contacts") {
-    const contacts = data.data;
 
-      contacts.forEach(([id, name]) => {
-          console.log("ID:", id);
-          console.log("Name:", name);
+    if (data.type === "Contacts") {
+      const container = document.getElementById("new_contacts");
+      container.innerHTML = ""; // clear old buttons so repeated messages don't duplicate
+
+      data.data.forEach(([id, username]) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "list-group-item list-group-item-action";
+        btn.dataset.contactId = id;
+        btn.textContent = username; // textContent (not innerHTML) avoids XSS from contact names
+
+        btn.addEventListener("click", () => this.onContactClick(id, username));
+
+        container.appendChild(btn);
       });
+    }
+  }
+
+  onContactClick(id, username) {
+    console.log("Clicked contact:", id, name);
+    // open chat, load messages, etc.
   }
 }
-}
+
+
 
 const chat = new ChatSocket();
 
