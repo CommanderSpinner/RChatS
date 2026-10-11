@@ -14,4 +14,9 @@ btn_contacts.addEventListener("click", function () {
   };
 
     chat.send(createChat);
+
+    // asynchronosly wait to sync contacts
+    setTimeout(() => {
+      sync_contacts();
+  }, 3000);
 });
