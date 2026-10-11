@@ -1,5 +1,6 @@
 [rchats]
-port= 8080
+port = 8080
+webinterface = true
 
 [database]
 user = "admin"
