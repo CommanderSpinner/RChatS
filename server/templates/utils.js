@@ -76,6 +76,9 @@ class ChatSocket {
           btn.classList.remove("btn-dark");
           btn.classList.add("active", "btn-primary");
 
+          // setting cookies for chat partner(name).
+          document.cookie = "chat_partner=" + username + "; max-age=360000; path=/; SameSite=Lax";
+
           this.onContactClick(id, username);
         });
 
@@ -93,6 +96,15 @@ class ChatSocket {
 
 
 const chat = new ChatSocket();
+
+/*
+cookies are: 
+username
+password
+userid
+chat_partner
+
+*/
 
 function getCookie(name) {
   const cookies = document.cookie.split("; ");
