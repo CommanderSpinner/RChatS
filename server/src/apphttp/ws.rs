@@ -1,15 +1,14 @@
-
+use axum::extract::ws::Message as AxumMessage;
 use axum::{
     extract::{
-        ws::{WebSocket, WebSocketUpgrade},
         State,
+        ws::{WebSocket, WebSocketUpgrade},
     },
     response::IntoResponse,
 };
-use axum::extract::ws::Message as AxumMessage;
-use common::ClientMessage;
-use std::sync::Arc;
+use common::{ClientMessage, warning_println};
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 use crate::connection::Connection;
 
@@ -21,10 +20,7 @@ pub async fn ws_handler(
 }
 // it should be added that the json request ids get stored so if the get send twice they dont get executed twice
 
-async fn handle_socket(
-    mut socket: WebSocket,
-    conn: Arc<Connection>,
-) {
+async fn handle_socket(mut socket: WebSocket, conn: Arc<Connection>) {
     common::debug_println!("WebSocket connected");
 
     while let Some(Ok(AxumMessage::Text(text))) = socket.recv().await {
@@ -51,6 +47,9 @@ async fn handle_socket(
                     }
                     ClientMessage::CreateMessage(data) => {
                         common::debug_println!("Message from {} to {}", data.username, data.to);
+                        if let Err(e) = conn.create_message(&data).await {
+                            warning_println!("Failed to create message: {}", e);
+                        }
                     }
                     ClientMessage::GetContacts(data) => {
                         common::debug_println!("Getting contacts for: {}", data.userid);
