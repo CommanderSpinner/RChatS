@@ -1,5 +1,4 @@
-use serde::{Serialize, Deserialize};
-use colored::*;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "type", content = "data")]
@@ -26,7 +25,7 @@ pub struct create_chat {
 pub struct create_message {
     pub username: String,
     pub plain_password: String,
-    pub to: String, // to is to which username it will be send 
+    pub to: String, // to is to which username it will be send
     pub content: String,
 }
 
@@ -35,15 +34,14 @@ pub struct get_contacts {
     pub userid: i64,
 }
 
-
 // macros for debugging
 
-// for printing something only when debuging but not in prod 
+// for printing something only when debuging but not in prod
 #[macro_export]
 macro_rules! debug_println {
     ($($arg:tt)*) => {
         #[cfg(debug_assertions)]{
-            
+
             use colored::Colorize;
 
             print!("{}", "Debug msg: ".blue());
@@ -51,5 +49,16 @@ macro_rules! debug_println {
         }
         #[cfg(not(debug_assertions))]
         {} // do nothing in release
+    };
+}
+
+#[macro_export]
+macro_rules! warning_println {
+    ($($arg:tt)*) => {
+
+        use colored::Colorize;
+
+        print!("{}", "Warning!: ".yellow());
+        println!("{}", format!($($arg)*).yellow());
     };
 }
