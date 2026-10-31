@@ -58,7 +58,7 @@ macro_rules! warning_println {
 
         use colored::Colorize;
 
-        print!("{}", "Warning!: ".yellow());
-        println!("{}", format!($($arg)*).yellow());
+        eprintln!("{}", "Warning!: ".yellow());
+        eprintln!("{}", format!($($arg)*).yellow());
     };
 }

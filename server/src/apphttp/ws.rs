@@ -41,7 +41,7 @@ async fn handle_socket(mut socket: WebSocket, conn: Arc<Connection>) {
                                 common::debug_println!("Chat created successfully");
                             }
                             Err(e) => {
-                                eprintln!("Failed to create chat: {}", e);
+                                warning_println!("Failed to create chat: {}", e);
                             }
                         }
                     }
@@ -77,7 +77,7 @@ async fn handle_socket(mut socket: WebSocket, conn: Arc<Connection>) {
                             }
 
                             Err(e) => {
-                                eprintln!("Failed to get contacts: {}", e);
+                                warning_println!("Failed to get contacts: {}", e);
                             }
                         }
                     }
