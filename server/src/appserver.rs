@@ -11,7 +11,10 @@ use axum::{
     Router,
     routing::{get, get_service, post},
 };
-use std::{net::SocketAddr, sync::Arc};
+use std::{
+    net::{Ipv4Addr, Ipv6Addr, SocketAddr},
+    sync::Arc,
+};
 use tower_http::services::ServeDir;
 
 pub struct AppServer {
@@ -118,13 +121,25 @@ impl AppServer {
 
         // Read port from config
         let port = Self::read_port();
-        let addr = SocketAddr::from(([0, 0, 0, 0], port));
 
-        println!("Server listening on {}", addr);
+        let v4 = TcpListener::bind(SocketAddr::from((Ipv4Addr::UNSPECIFIED, port))).await?;
 
-        let listener = TcpListener::bind(addr).await?;
+        let v6_socket = socket2::Socket::new(
+            socket2::Domain::IPV6,
+            socket2::Type::STREAM,
+            Some(socket2::Protocol::TCP),
+        )?;
+        v6_socket.set_only_v6(true)?;
+        v6_socket.set_nonblocking(true)?;
+        v6_socket.bind(&SocketAddr::from((Ipv6Addr::UNSPECIFIED, port)).into())?;
+        v6_socket.listen(1024)?;
+        let v6 = TcpListener::from_std(v6_socket.into())?;
 
-        axum::serve(listener, app).await?;
+        println!("Server listening on 0.0.0.0:{port} and [::]:{port}");
+
+        let (r4, r6) = tokio::join!(axum::serve(v4, app.clone()), axum::serve(v6, app),);
+        r4?;
+        r6?;
 
         Ok(())
     }
