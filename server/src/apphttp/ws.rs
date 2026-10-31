@@ -71,7 +71,7 @@ async fn handle_socket(mut socket: WebSocket, conn: Arc<Connection>) {
                                 common::debug_println!("Sending JSON: {}", json);
 
                                 if let Err(e) = socket.send(AxumMessage::Text(json.into())).await {
-                                    eprintln!("Failed to send contacts: {}", e);
+                                    warning_println!("Failed to send contacts: {}", e);
                                     break;
                                 }
                             }
