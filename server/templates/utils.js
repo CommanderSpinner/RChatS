@@ -1,3 +1,5 @@
+
+
 class ChatSocket {
   constructor(url) {
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
@@ -41,6 +43,10 @@ class ChatSocket {
     }
   }
 
+  getMessages(id: number) { // not sure about this maybe move it outside the class
+
+  }
+
   onMessage(event) {
     const data = JSON.parse(event.data);
 
@@ -80,6 +86,9 @@ class ChatSocket {
           document.cookie = "chat_partner=" + username + "; max-age=360000; path=/; SameSite=Lax";
 
           this.onContactClick(id, username);
+
+          // getting chat messages from partner
+          getMessages(getCookie("chat_partner"));
         });
 
         container.appendChild(btn);
