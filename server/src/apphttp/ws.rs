@@ -81,6 +81,10 @@ async fn handle_socket(mut socket: WebSocket, conn: Arc<Connection>) {
                             }
                         }
                     }
+                    ClientMessage::GetMessages(data) => {
+                        common::debug_println!("Getting messages for: {} and {}", data.userid, data.partnerid);
+
+                    }
                 }
             }
             Err(e) => {

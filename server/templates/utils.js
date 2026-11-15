@@ -1,4 +1,25 @@
 
+/*
+cookies are: 
+username
+password
+userid
+chat_partner
+
+*/
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+
+  for (const cookie of cookies) {
+    const [key, value] = cookie.split("=");
+    if (key === name) {
+      return decodeURIComponent(value);
+    }
+  }
+
+  return null;
+}
 
 class ChatSocket {
   constructor(url) {
@@ -43,8 +64,17 @@ class ChatSocket {
     }
   }
 
-  getMessages(id: number) { // not sure about this maybe move it outside the class
+  getMessages(partner_id, uid) { // not sure about this maybe move it outside the class
 
+    const get_messages = {
+      type: "GetMessages",
+      data: {
+        partnerid: Number(partner_id),
+        userid: Number(uid),
+      }
+    };
+
+    this.send(get_messages)
   }
 
   onMessage(event) {
@@ -83,12 +113,12 @@ class ChatSocket {
           btn.classList.add("active", "btn-primary");
 
           // setting cookies for chat partner(name).
-          document.cookie = "chat_partner=" + username + "; max-age=360000; path=/; SameSite=Lax";
+          document.cookie = "chat_partner=" + id + "; max-age=360000; path=/; SameSite=Lax";
 
           this.onContactClick(id, username);
 
           // getting chat messages from partner
-          getMessages(getCookie("chat_partner"));
+          this.getMessages(getCookie("chat_partner"), getCookie("userid"));
         });
 
         container.appendChild(btn);
@@ -106,26 +136,3 @@ class ChatSocket {
 
 const chat = new ChatSocket();
 
-/*
-cookies are: 
-username
-password
-userid
-chat_partner
-
-*/
-
-function getCookie(name) {
-  const cookies = document.cookie.split("; ");
-
-  for (const cookie of cookies) {
-    const [key, value] = cookie.split("=");
-    if (key === name) {
-      return decodeURIComponent(value);
-    }
-  }
-
-  return null;
-}
-
-console.log(getCookie("username"));

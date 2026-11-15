@@ -7,6 +7,7 @@ pub enum ClientMessage {
     CreateChat(create_chat),
     CreateMessage(create_message),
     GetContacts(get_contacts),
+    GetMessages(get_messages),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -32,6 +33,12 @@ pub struct create_message {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct get_contacts {
     pub userid: i64,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct get_messages {
+    pub userid: i64,
+    pub partnerid: i64,
 }
 
 // macros for debugging
