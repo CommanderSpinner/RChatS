@@ -1,4 +1,5 @@
 use sqlx::FromRow;
+use chrono::NaiveDateTime;
 
 #[derive(Debug, Clone, FromRow)]
 pub struct Message {
@@ -7,5 +8,5 @@ pub struct Message {
     pub uid: i64,
     pub url: String,
     pub content: String,
-    pub created_at: String,
+    pub created_at: Option<NaiveDateTime>,
 }

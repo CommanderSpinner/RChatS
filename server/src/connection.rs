@@ -158,6 +158,7 @@ impl Connection {
     }
 
     // returns messages. count defines how many messages should be read
+    // maybe change later count to be -1 or so for loading all messages
     pub async fn read_messages_from_chat(&self, cid: i64, count: i64) -> Result<Vec<Message>, sqlx::Error> {
         let m: Vec<Message> = sqlx::query_as::<_, Message>("SELECT * FROM message WHERE cid = $1 ORDER BY created_at LIMIT $2;")
             .bind(cid)

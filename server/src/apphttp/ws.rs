@@ -83,7 +83,30 @@ async fn handle_socket(mut socket: WebSocket, conn: Arc<Connection>) {
                     }
                     ClientMessage::GetMessages(data) => {
                         common::debug_println!("Getting messages for: {} and {}", data.userid, data.partnerid);
+                        
+                        let cid: i64 = match conn.get_cid(data.userid, data.partnerid).await {
+                            Ok(id) => id,
+                            Err(err) => {
+                                common::debug_println!("failed to get cid: {:?}", err);
+                                0 // fallback i64
+                            }
+                        };
 
+                        common::debug_println!("cid: {:?}", &cid);
+
+                        match conn.read_messages_from_chat(cid, 10).await { // loading 10 messages for now change later !!!!!
+                            Ok(messages) => {
+                                common::debug_println!("loaded {} messages", messages.len());
+                                for msg in messages {
+                                }
+                            }
+                            Err(sqlx::Error::RowNotFound) => {
+                                common::debug_println!("no messages found for cid {}", cid);
+                            }
+                            Err(err) => {
+                                common::debug_println!("failed to read messages for cid {}: {:?}", cid, err);
+                            }
+                        }
                     }
                 }
             }
