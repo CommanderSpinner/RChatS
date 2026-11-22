@@ -123,6 +123,8 @@ class ChatSocket {
 
         container.appendChild(btn);
       });
+    } else if (data.type === "Messages") {
+      console.log(data.data);
     }
   }
 

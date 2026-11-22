@@ -97,8 +97,22 @@ async fn handle_socket(mut socket: WebSocket, conn: Arc<Connection>) {
                         match conn.read_messages_from_chat(cid, 10).await { // loading 10 messages for now change later !!!!!
                             Ok(messages) => {
                                 common::debug_println!("loaded {} messages", messages.len());
-                                for msg in messages {
+                                
+
+                                let response = serde_json::json!({
+                                    "type": "Messages",
+                                    "data": messages
+                                });
+
+                                let json = response.to_string();
+
+                                common::debug_println!("Sending JSON: {}", json);
+
+                                if let Err(e) = socket.send(AxumMessage::Text(json.into())).await {
+                                    warning_println!("Failed to send contacts: {}", e);
+                                    break;
                                 }
+
                             }
                             Err(sqlx::Error::RowNotFound) => {
                                 common::debug_println!("no messages found for cid {}", cid);
