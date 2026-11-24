@@ -125,6 +125,7 @@ class ChatSocket {
       });
     } else if (data.type === "Messages") {
       console.log(data.data);
+      chatInsertMessages(data.data);
     }
   }
 
@@ -133,7 +134,6 @@ class ChatSocket {
     // open chat, load messages, etc.
   }
 }
-
 
 
 const chat = new ChatSocket();
